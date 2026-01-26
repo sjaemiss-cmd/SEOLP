@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+@theme inline {
+    --color-brand-yellow: #FECE48;
+    --color-brand-black: #111827;
+    --color-status-red: #EF4444;
+    --color-status-green: #22C55E;
+    --color-background: #111827;
+    --color-foreground: #FFFFFF;
+    --font-sans: var(--font-pretendard), -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    --font-hakgyoansim: var(--font-hakgyoansim);
+}
+
+@font-face {
+    font-family: 'establish Retrosans';
+    src: url('/fonts/establish_Retrosans.otf') format('opentype'),
+        url('/fonts/establish_Retrosans.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --background: #111827;
+    --foreground: #FFFFFF;
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+}
+
+/* Utility class for Hakgyoansim font */
+.font-hakgyoansim {
+    font-family: var(--font-hakgyoansim), sans-serif;
+}
+
+/* Utility class for Retrosans font */
+.font-retrosans {
+    font-family: 'establish Retrosans', sans-serif !important;
+}
+
+/* Fixed header offset for anchor links */
+section[id] {
+    scroll-margin-top: 120px;
+}
+
+/* Desktop-only Scroll Snapping */
+@media (min-width: 768px) {
+    html {
+        scroll-snap-type: y mandatory;
+    }
+
+    section {
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+    }
+
+    /* Disable snapping for short sections or footer if needed */
+    footer {
+        scroll-snap-align: start;
+    }
+}
+
+/* Custom Animations for Performance */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pulse-soft {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+.animate-pulse-soft {
+    animation: pulse-soft 2s infinite;
+}
+
+.delay-100 {
+    animation-delay: 100ms;
+}
+
+.delay-200 {
+    animation-delay: 200ms;
+}
+
+.delay-300 {
+    animation-delay: 300ms;
+}
+
+.delay-500 {
+    animation-delay: 500ms;
+}

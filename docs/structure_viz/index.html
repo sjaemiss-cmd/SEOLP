@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로젝트 구조 완벽 설명서 | 고수의 운전면허</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'dark', fontFamily: 'Pretendard, sans-serif' });
+    </script>
+    <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        .mermaid {
+            background-color: #1e293b;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        .card {
+            background-color: #1e293b;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        .code {
+            font-family: 'Fira Code', monospace;
+            background-color: #0f172a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #38bdf8;
+        }
+
+        .highlight {
+            color: #fbbf24;
+            font-weight: bold;
+        }
+
+        details summary {
+            cursor: pointer;
+        }
+
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details[open] summary {
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="mb-12 text-center md:text-left">
+            <h1 class="text-3xl md:text-5xl font-bold mb-3 text-yellow-400">프로젝트 구조 완벽 설명서</h1>
+            <p class="text-gray-400 text-lg">고수의 운전면허 랜딩 페이지 시스템 아키텍처 문서</p>
+            <p class="text-gray-500 text-sm mt-2">마지막 업데이트: 2026-01-09</p>
+        </header>
+
+        <!-- Table of Contents -->
+        <nav class="card mb-12">
+            <h2 class="text-xl font-bold mb-4 text-white">📚 목차</h2>
+            <ol class="list-decimal list-inside space-y-2 text-gray-300">
+                <li><a href="#overview" class="hover:text-yellow-400 transition-colors">프로젝트 개요</a></li>
+                <li><a href="#routing" class="hover:text-yellow-400 transition-colors">라우팅 아키텍처</a></li>
+                <li><a href="#integrated" class="hover:text-yellow-400 transition-colors">통합 랜딩 페이지 (의도 불분명 고객용)</a>
+                </li>
+                <li><a href="#intent-pages" class="hover:text-yellow-400 transition-colors">의도별 전용 페이지</a></li>
+                <li><a href="#location-pages" class="hover:text-yellow-400 transition-colors">지역 기반 허브 페이지</a></li>
+                <li><a href="#components" class="hover:text-yellow-400 transition-colors">컴포넌트 계층 구조</a></li>
+                <li><a href="#data-flow" class="hover:text-yellow-400 transition-colors">데이터 흐름</a></li>
+                <li><a href="#file-map" class="hover:text-yellow-400 transition-colors">주요 파일 맵</a></li>
+            </ol>
+        </nav>
+
+        <!-- Section 1: Overview -->
+        <section id="overview" class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-yellow-500 pl-4">1. 프로젝트 개요</h2>
+            <div class="card">
+                <p class="text-gray-300 leading-relaxed mb-4">
+                    이 프로젝트는 <span class="highlight">Next.js App Router</span>를 기반으로 구축된 동적 랜딩 페이지 시스템입니다.
+                    고객의 <span class="highlight">검색 의도(Intent)</span>에 따라 맞춤형 콘텐츠를 제공하며, 다음과 같은 5가지 주요 고객군을 타겟팅합니다:
+                </p>
+                <ul class="grid grid-cols-1 md:grid-cols-5 gap-4 mt-6">
+                    <li class="bg-red-500/20 border border-red-500/50 rounded-lg p-4 text-center">
+                        <span class="text-red-400 font-bold block mb-1">Speed (속성반)</span>
+                        <span class="text-gray-400 text-sm">빠른 면허 취득 희망</span>
+                    </li>
+                    <li class="bg-blue-500/20 border border-blue-500/50 rounded-lg p-4 text-center">
+                        <span class="text-blue-400 font-bold block mb-1">Skill (장롱면허)</span>
+                        <span class="text-gray-400 text-sm">운전 감각 회복 희망</span>
+                    </li>
+                    <li class="bg-green-500/20 border border-green-500/50 rounded-lg p-4 text-center">
+                        <span class="text-green-400 font-bold block mb-1">Phobia (공포탈출)</span>
+                        <span class="text-gray-400 text-sm">운전 공포 극복 희망</span>
+                    </li>
+                    <li class="bg-purple-500/20 border border-purple-500/50 rounded-lg p-4 text-center">
+                        <span class="text-purple-400 font-bold block mb-1">Practice (운전연수)</span>
+                        <span class="text-gray-400 text-sm">실력 향상 희망</span>
+                    </li>
+                    <li class="bg-yellow-500/20 border border-yellow-500/50 rounded-lg p-4 text-center">
+                        <span class="text-yellow-400 font-bold block mb-1">Cost (비용절약)</span>
+                        <span class="text-gray-400 text-sm">합리적 가격 중시</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 2: Routing Architecture -->
+        <section id="routing" class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-blue-500 pl-4">2. 라우팅 아키텍처</h2>
+            <p class="text-gray-300 mb-6">Next.js App Router를 사용하여 디렉토리 기반 라우팅과 동적 라우팅을 조합합니다.</p>
+            <div class="mermaid">
+                graph TD
+                subgraph AppRouter["src/app (App Router)"]
+                layout[layout.tsx<br />루트 레이아웃]
+
+                subgraph StaticRoutes["정적 라우트"]
+                home[/page.tsx<br />기본 랜딩 (Cost)/]
+                speed[/speed/page.tsx/]
+                skill[/skill/page.tsx/]
+                phobia[/phobia/page.tsx/]
+                practice[/practice/page.tsx/]
+                end
+
+                subgraph DynamicRoutes["동적 라우트"]
+                locSlug["/locations/[slug]/page.tsx"<br />지역 허브 페이지]
+                locIntent["/locations/[slug]/[intent]/page.tsx"<br />지역+의도 조합]
+                end
+                end
+
+                layout --> home
+                layout --> speed
+                layout --> skill
+                layout --> phobia
+                layout --> practice
+                layout --> locSlug
+                locSlug --> locIntent
+
+                style layout fill:#1e40af,stroke:#fff,stroke-width:2px,color:#fff
+                style home fill:#eab308,stroke:#fff,color:#000
+                style speed fill:#ef4444,stroke:#fff,color:#fff
+                style skill fill:#3b82f6,stroke:#fff,color:#fff
+                style phobia fill:#22c55e,stroke:#fff,color:#fff
+                style practice fill:#a855f7,stroke:#fff,color:#fff
+                style locSlug fill:#f97316,stroke:#fff,color:#fff
+                style locIntent fill:#f97316,stroke:#fff,color:#fff
+            </div>
+        </section>
+
+        <!-- Section 3: Integrated Landing Page -->
+        <section id="integrated" class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-green-500 pl-4">3. 통합 랜딩 페이지 (의도 불분명 고객용)</h2>
+            <div class="card mb-6">
+                <h3 class="text-xl font-bold text-white mb-4">🏠 루트 페이지 (<span class="code">/</span>)</h3>
+                <p class="text-gray-300 leading-relaxed mb-4">
+                    검색 의도가 불분명하거나 일반적인 "운전면허"로 검색한 고객이 처음 보게 되는 페이지입니다.
+                    <span class="highlight">기본값은 Cost(비용절약)</span> 테마가 적용되며, 가장 보편적인 관심사인 "합리적인 가격"을 강조합니다.
+                </p>
+                <div class="bg-gray-900 rounded-lg p-4 text-sm">
+                    <p class="text-gray-400 mb-2">📁 파일 위치: <span class="code">src/app/page.tsx</span></p>
+                    <p class="text-gray-400">📊 데이터 소스: <span class="code">landingData.cost</span></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="text-xl font-bold text-white mb-4">🔀 LandingPageContent 컴포넌트</h3>
+                <p class="text-gray-300 leading-relaxed mb-4">
+                    URL 쿼리 파라미터 <span class="code">?type=</span>를 사용하여 <span class="highlight">하나의 컴포넌트에서 5가지 의도에 맞는
+                        콘텐츠를 동적으로 렌더링</span>합니다.
+                    이 방식은 광고 캠페인에서 URL에 파라미터를 붙여 트래픽을 유도할 때 유용합니다.
+                </p>
+                <div class="bg-gray-900 rounded-lg p-4 text-sm mb-4">
+                    <p class="text-gray-400 mb-2">📁 파일 위치: <span
+                            class="code">src/components/LandingPageContent.tsx</span></p>
+                    <p class="text-gray-300 mt-3">사용 예시:</p>
+                    <ul class="list-disc list-inside text-gray-400 mt-2 space-y-1">
+                        <li><span class="code">/?type=speed</span> → 속성반 콘텐츠</li>
+                        <li><span class="code">/?type=skill</span> → 장롱면허 콘텐츠</li>
+                        <li><span class="code">/?type=phobia</span> → 공포탈출 콘텐츠</li>
+                        <li><span class="code">/?type=practice</span> → 운전연수 콘텐츠</li>
+                        <li><span class="code">/?type=cost</span> 또는 <span class="code">/</span> → 비용절약 콘텐츠 (기본값)</li>
+                    </ul>
+                </div>
+                <div class="mermaid">
+                    flowchart LR
+                    URL["URL ?type=..."] --> LPC[LandingPageContent]
+                    LPC -->|type=speed| SpeedLayout[SpeedHero + SpeedProblem + ...]
+                    LPC -->|type=skill| SkillLayout[SkillHero + SkillProblem + ...]
+                    LPC -->|type=phobia| PhobiaLayout[PhobiaHero + PhobiaProblem + ...]
+                    LPC -->|type=practice| PracticeLayout[PracticeHero + PracticeProblem + ...]
+                    LPC -->|기본값 cost| CostLayout[Hero + CostCalculator + USP + ...]
+
+                    style LPC fill:#22c55e,stroke:#fff,color:#fff
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Intent Pages -->
+        <section id="intent-pages" class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-purple-500 pl-4">4. 의도별 전용 페이지</h2>
+            <p class="text-gray-300 mb-6">SEO 최적화 및 명확한 URL 구조를 위해 각 의도별로 <span class="highlight">독립적인 정적 페이지</span>가
+                존재합니다.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Speed -->
+                <div class="card border-l-4 border-red-500">
+                    <h3 class="text-lg font-bold text-red-400 mb-2">🚀 Speed (속성반)</h3>
+                    <p class="text-gray-400 text-sm mb-3">URL: <span class="code">/speed</span></p>
+                    <p class="text-gray-300 text-sm mb-3">면허를 빠르게 취득하고 싶은 고객 대상. "3일 완성" 마케팅의 진실을 폭로하고 현실적인 1~2주 완성을 제안.
+                    </p>
+                    <details class="text-sm">
+                        <summary class="text-blue-400 hover:text-blue-300">포함 컴포넌트 보기</summary>
+                        <ul class="list-disc list-inside text-gray-400 mt-2 space-y-1">
+                            <li>SpeedHero</li>
+                            <li>LicenseDDayCalculator (D-Day 계산기)</li>
+                            <li>SpeedProblem</li>
+                            <li>SpeedStory (Before/After 사례)</li>
+                            <li>SpeedCurriculum</li>
+                            <li>SpeedCTA</li>
+                        </ul>
+                    </details>
+                </div>
+
+                <!-- Skill -->
+                <div class="card border-l-4 border-blue-500">
+                    <h3 class="text-lg font-bold text-blue-400 mb-2">🎯 Skill (장롱면허)</h3>
+                    <p class="text-gray-400 text-sm mb-3">URL: <span class="code">/skill</span></p>
+                    <p class="text-gray-300 text-sm mb-3">면허는 있지만 오랫동안 운전하지 않아 감각을 잃은 고객 대상. 운전 DNA 테스트로 자가 진단 유도.</p>
+                    <details class="text-sm">
+                        <summary class="text-blue-400 hover:text-blue-300">포함 컴포넌트 보기</summary>
+                        <ul class="list-disc list-inside text-gray-400 mt-2 space-y-1">
+                            <li>SkillHero</li>
+                            <li>DriverDNATest (자가 진단 테스트)</li>
+                            <li>SkillProblem</li>
+                            <li>SkillCurriculum</li>
+                            <li>SkillCTA</li>
+                        </ul>
+                    </details>
+                </div>
+
+                <!-- Phobia -->
+                <div class="card border-l-4 border-green-500">
+                    <h3 class="text-lg font-bold text-green-400 mb-2">🛡️ Phobia (공포탈출)</h3>
+                    <p class="text-gray-400 text-sm mb-3">URL: <span class="code">/phobia</span></p>
+                    <p class="text-gray-300 text-sm mb-3">운전에 대한 공포나 트라우마가 있는 고객 대상. 안전한 실내 시뮬레이터 환경 강조.</p>
+                    <details class="text-sm">
+                        <summary class="text-blue-400 hover:text-blue-300">포함 컴포넌트 보기</summary>
+                        <ul class="list-disc list-inside text-gray-400 mt-2 space-y-1">
+                            <li>PhobiaHero</li>
+                            <li>AnxietyReliefPrescription (운전 처방전)</li>
+                            <li>PhobiaProblem</li>
+                            <li>PhobiaCurriculum</li>
+                            <li>PhobiaCTA</li>
+                        </ul>
+                    </details>
+                </div>
+
+                <!-- Practice -->
+                <div class="card border-l-4 border-purple-500">
+                    <h3 class="text-lg font-bold text-purple-400 mb-2">📚 Practice (운전연수)</h3>
+                    <p class="text-gray-400 text-sm mb-3">URL: <span class="code">/practice</span></p>
+                    <p class="text-gray-300 text-sm mb-3">특정 부분(주차, 골목길 등)만 집중적으로 연습하고 싶은 고객 대상. 맞춤형 커리큘럼 빌더 제공.</p>
+                    <details class="text-sm">
+                        <summary class="text-blue-400 hover:text-blue-300">포함 컴포넌트 보기</summary>
+                        <ul class="list-disc list-inside text-gray-400 mt-2 space-y-1">
+                            <li>PracticeHero</li>
+                            <li>CurriculumBuilder (커리큘럼 빌더)</li>
+                            <li>PracticeProblem</li>
+                            <li>PracticeCurriculum</li>
+                            <li>PracticeCTA</li>
+                        </ul>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Location Pages -->
+        <section id="location-pages" class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-orange-500 pl-4">5. 지역 기반 허브 페이지</h2>
+            <div class="card">
+                <p class="text-gray-300 leading-relaxed mb-4">
+                    "노원 운전면허", "도봉 운전연수" 같은 <span class="highlight">지역 키워드</span>로 검색한 고객을 위한 페이지입니다.
+                    지역명을 동적으로 받아 SEO 메타데이터와 콘텐츠에 반영합니다.
+                </p>
+                <div class="bg-gray-900 rounded-lg p-4 text-sm mb-6">
+                    <p class="text-gray-400 mb-2">📁 파일 위치: <span class="code">src/app/locations/[slug]/page.tsx</span>
+                    </p>
+                    <p class="text-gray-400 mb-2">📊 데이터 소스: <span class="code">src/data/seoData.ts</span>
+                        (locationData)</p>
+                    <p class="text-gray-300 mt-3">URL 예시:</p>
+                    <ul class="list-disc list-inside text-gray-400 mt-2 space-y-1">
+                        <li><span class="code">/locations/노원</span></li>
+                        <li><span class="code">/locations/도봉</span></li>
+                        <li><span class="code">/locations/강북</span></li>
+                    </ul>
+                </div>
+
+                <h4 class="text-lg font-bold text-white mb-3">🧩 ProgramTeaser 컴포넌트</h4>
+                <p class="text-gray-300 text-sm mb-4">
+                    지역 허브 페이지에서는 <span class="code">ProgramTeaser</span> 컴포넌트를 사용하여 고객이 자신의 니즈에 맞는 코스(Speed, Skill,
+                    Phobia, Practice)를 선택하도록 유도합니다.
+                    각 코스 카드를 클릭하면 해당 의도의 전용 페이지로 이동합니다.
+                </p>
+                <div class="mermaid">
+                    flowchart TD
+                    User["고객 (지역 키워드 검색)"] --> LocPage["/locations/[slug]<br />지역 허브 페이지"]
+                    LocPage --> Teaser[ProgramTeaser<br />(코스 선택 카드)]
+                    Teaser -->|속성반 선택| Speed["/speed"]
+                    Teaser -->|장롱면허 선택| Skill["/skill"]
+                    Teaser -->|공포탈출 선택| Phobia["/phobia"]
+                    Teaser -->|운전연수 선택| Practice["/practice"]
+
+                    style LocPage fill:#f97316,stroke:#fff,color:#fff
+                    style Teaser fill:#0ea5e9,stroke:#fff,color:#fff
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Component Hierarchy -->
+        <section id="components" class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-cyan-500 pl-4">6. 컴포넌트 계층 구조</h2>
+            <p class="text-gray-300 mb-6">모든 페이지는 <span class="highlight">공통 컴포넌트</span>와 <span class="highlight">의도별 전용
+                    컴포넌트</span>로 구성됩니다.</p>
+            <div class="mermaid">
+                classDiagram
+                class SharedComponents {
+                <<공통 - 모든 페이지에서 사용>>
+                    +Header (헤더)
+                    +Footer (푸터)
+                    +SocialProof (후기/수강생 말)
+                    +LocationSection (위치 안내)
+                    +NewYearEvent (이벤트 배너)
+                    +FAQ (자주 묻는 질문)
+                    +FloatingCTA (하단 고정 CTA)
+                    }
+
+                    class InteractiveTools {
+                    <<인터랙티브 도구>>
+                        +CostCalculator (비용 계산기)
+                        +LicenseDDayCalculator (D-Day 계산)
+                        +DriverDNATest (운전 DNA 테스트)
+                        +AnxietyReliefPrescription (운전 처방전)
+                        +CurriculumBuilder (커리큘럼 빌더)
+                        }
+
+                        class IntentHero {
+                        <<히어로 섹션>>
+                            +Hero (기본)
+                            +SpeedHero
+                            +SkillHero
+                            +PhobiaHero
+                            +PracticeHero
+                            }
+
+                            class IntentContent {
+                            <<본문 콘텐츠>>
+                                +USP / Problem
+                                +Curriculum
+                                +Offer / CTA
+                                +Story (Speed only)
+                                }
+
+                                IntentHero --> SharedComponents : 포함
+                                IntentContent --> SharedComponents : 포함
+                                InteractiveTools --> IntentContent : 삽입
+            </div>
+        </section>
+
+        <!-- Section 7: Data Flow -->
+        <section id="data-flow" class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-pink-500 pl-4">7. 데이터 흐름</h2>
+            <div class="card">
+                <p class="text-gray-300 leading-relaxed mb-6">
+                    모든 콘텐츠 데이터는 <span class="highlight">중앙 집중식 데이터 파일</span>에서 관리됩니다. 컴포넌트는 이 데이터를 props로 받아 렌더링합니다.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-gray-900 rounded-lg p-4">
+                        <h4 class="font-bold text-yellow-400 mb-2">📦 landingData.ts</h4>
+                        <p class="text-gray-400 text-sm">의도별 콘텐츠 데이터 (hero, problem, curriculum, offer 등)</p>
+                        <p class="text-gray-500 text-xs mt-2">위치: <span class="code">src/data/landingData.ts</span></p>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-4">
+                        <h4 class="font-bold text-blue-400 mb-2">⚙️ siteConfig.ts</h4>
+                        <p class="text-gray-400 text-sm">사이트 전역 설정 (회사 정보, 전화번호, 헤더/푸터 등)</p>
+                        <p class="text-gray-500 text-xs mt-2">위치: <span class="code">src/data/siteConfig.ts</span></p>
+                    </div>
+                </div>
+                <div class="mermaid">
+                    flowchart LR
+                    subgraph DataLayer["데이터 레이어"]
+                    LD[landingData.ts]
+                    SC[siteConfig.ts]
+                    SEO[seoData.ts]
+                    end
+
+                    subgraph Pages["페이지"]
+                    Speed[Speed Page]
+                    Skill[Skill Page]
+                    Phobia[Phobia Page]
+                    Practice[Practice Page]
+                    Cost[Cost Page]
+                    Loc[Location Page]
+                    end
+
+                    subgraph Shared["공통 컴포넌트"]
+                    Header
+                    Footer
+                    FAQ
+                    end
+
+                    LD -->|speed| Speed
+                    LD -->|skill| Skill
+                    LD -->|phobia| Phobia
+                    LD -->|practice| Practice
+                    LD -->|cost| Cost
+                    SC --> Shared
+                    SEO --> Loc
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8: File Map -->
+        <section id="file-map" class="mb-16">
+            <h2 class="text-2xl font-bold mb-6 border-l-4 border-gray-500 pl-4">8. 주요 파일 맵</h2>
+            <div class="card overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-700">
+                            <th class="text-left py-3 px-4 text-gray-400 font-medium">경로</th>
+                            <th class="text-left py-3 px-4 text-gray-400 font-medium">역할</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-300">
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                            <td class="py-3 px-4"><span class="code">src/app/page.tsx</span></td>
+                            <td class="py-3 px-4">루트 페이지 (기본 Cost 테마)</td>
+                        </tr>
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                            <td class="py-3 px-4"><span class="code">src/app/speed/page.tsx</span></td>
+                            <td class="py-3 px-4">속성반 전용 페이지</td>
+                        </tr>
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                            <td class="py-3 px-4"><span class="code">src/app/skill/page.tsx</span></td>
+                            <td class="py-3 px-4">장롱면허 전용 페이지</td>
+                        </tr>
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                            <td class="py-3 px-4"><span class="code">src/app/phobia/page.tsx</span></td>
+                            <td class="py-3 px-4">공포탈출 전용 페이지</td>
+                        </tr>
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                            <td class="py-3 px-4"><span class="code">src/app/practice/page.tsx</span></td>
+                            <td class="py-3 px-4">운전연수 전용 페이지</td>
+                        </tr>
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                            <td class="py-3 px-4"><span class="code">src/app/locations/[slug]/page.tsx</span></td>
+                            <td class="py-3 px-4">지역 허브 페이지</td>
+                        </tr>
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                            <td class="py-3 px-4"><span class="code">src/components/LandingPageContent.tsx</span></td>
+                            <td class="py-3 px-4">쿼리 파라미터 기반 통합 랜딩 컴포넌트</td>
+                        </tr>
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                            <td class="py-3 px-4"><span class="code">src/data/landingData.ts</span></td>
+                            <td class="py-3 px-4">의도별 콘텐츠 데이터</td>
+                        </tr>
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                            <td class="py-3 px-4"><span class="code">src/data/siteConfig.ts</span></td>
+                            <td class="py-3 px-4">사이트 전역 설정</td>
+                        </tr>
+                        <tr class="hover:bg-gray-800/50">
+                            <td class="py-3 px-4"><span class="code">src/data/seoData.ts</span></td>
+                            <td class="py-3 px-4">SEO 및 지역 데이터</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="text-center text-gray-500 mt-20 border-t border-gray-800 pt-8">
+            <p>Generated by Antigravity Agent | 2026-01-09</p>
+        </footer>
+    </div>
+</body>
+
+</html>
