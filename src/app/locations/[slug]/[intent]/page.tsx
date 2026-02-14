@@ -1,9 +1,9 @@
 import { Metadata } from "next";
 import React from "react";
 import { notFound } from "next/navigation";
-import { siteConfig } from "@/data/siteConfig";
+import { getSiteConfig } from "@/lib/getSiteConfig";
 import { locationData, intentData, intentKeywordMap } from "@/data/seoData";
-import { getIntentComponents, isValidIntent, IntentType } from "@/config/intentConfig";
+import { getIntentComponents, isValidIntent, IntentType } from "@/data/intentConfig";
 import { JSONLDScript, generateFAQSchema, generateLocalBusinessSchema } from "@/lib/structuredData";
 
 // Shared Components
@@ -80,7 +80,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             url: `https://dobong.gosudriving.com/locations/${slug}/${intent}`,
             images: [
                 {
-                    url: "https://dobong.gosudriving.com/logo-black.webp",
+                    url: "https://dobong.gosudriving.com/images/logos/logo-black.webp",
                     width: 800,
                     height: 600,
                     alt: `${locationName} 운전면허`,
@@ -103,13 +103,14 @@ export default async function Page({ params }: Props) {
     }
 
     // Validate keyword for intent (Runtime check)
-    // Validate keyword for intent (Runtime check)
     // Only validate if we have a valid location info (SEO page)
     // If locationInfo is missing (e.g. /locations/cost), we treat it as a generic page and allow it
     const validKeywords = intentKeywordMap[intent] || [];
     if (slugKeyword && !validKeywords.includes(slugKeyword)) {
         return notFound();
     }
+
+    const siteConfig = await getSiteConfig();
 
     // Get theme and data
     const intentKey = intent as IntentType;

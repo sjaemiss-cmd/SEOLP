@@ -52,23 +52,6 @@ section[id] {
     scroll-margin-top: 120px;
 }
 
-/* Desktop-only Scroll Snapping */
-@media (min-width: 768px) {
-    html {
-        scroll-snap-type: y mandatory;
-    }
-
-    section {
-        scroll-snap-align: start;
-        scroll-snap-stop: always;
-    }
-
-    /* Disable snapping for short sections or footer if needed */
-    footer {
-        scroll-snap-align: start;
-    }
-}
-
 /* Custom Animations for Performance */
 @keyframes fadeInUp {
     from {
@@ -130,4 +113,15 @@ section[id] {
 
 .delay-500 {
     animation-delay: 500ms;
+}
+
+/* Preview highlight pulse for CMS live preview */
+@keyframes previewHighlightPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.15);
+    }
 }

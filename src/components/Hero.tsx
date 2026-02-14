@@ -1,6 +1,7 @@
+import React from "react";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import type { LandingContent } from "@/data/landingData";
+import type { LandingContent, TrustBarItem } from "@/data/siteConfig";
 
 interface HeroProps {
     data: LandingContent['hero'];
@@ -8,6 +9,8 @@ interface HeroProps {
     locationName?: string;
     keyword?: string;
     designStyle?: 'aggressive' | 'trust' | 'premium';
+    trustBar?: TrustBarItem[];
+    heroBackground?: string;
 }
 
 /**
@@ -15,7 +18,7 @@ interface HeroProps {
  * Props로 데이터를 받아 렌더링하는 프레젠테이션 컴포넌트
  * LCP 최적화를 위해 framer-motion 제거하고 CSS 애니메이션 사용
  */
-const Hero = ({ data, theme, locationName, keyword, designStyle = 'premium' }: HeroProps) => {
+const Hero = ({ data, theme, locationName, keyword, designStyle = 'premium', trustBar, heroBackground }: HeroProps) => {
     // 지역명이 있으면 별도 라인으로 분리하고, 타이틀에서 "운전면허" 중복 제거
     const mainTitle = locationName
         ? data.title.replace("운전면허 ", "")
@@ -28,7 +31,7 @@ const Hero = ({ data, theme, locationName, keyword, designStyle = 'premium' }: H
             {/* Background Image */}
             <div className="absolute inset-0 z-0">
                 <Image
-                    src="/hero3.webp"
+                    src={heroBackground || "/images/heroes/hero3.webp"}
                     alt="고수의 운전면허 도봉점 실내 운전연습장 전경"
                     fill
                     className="object-cover"
@@ -82,15 +85,31 @@ const Hero = ({ data, theme, locationName, keyword, designStyle = 'premium' }: H
                         {data.ctaText}
                         <ArrowRight size={20} />
                     </a>
+
+                    {/* Trust Bar */}
+                    {trustBar && trustBar.length > 0 && (
+                        <div className="flex flex-wrap items-center justify-start gap-4 md:gap-8 mt-10 text-white/70 text-sm md:text-base">
+                            {trustBar.map((item, idx) => (
+                                <React.Fragment key={idx}>
+                                    {idx > 0 && <div className="w-px h-5 bg-white/20 hidden sm:block" />}
+                                    <div className="flex items-center gap-2">
+                                        {item.prefix && <span>{item.prefix}</span>}
+                                        <span className="font-bold text-lg md:text-xl" style={idx === trustBar.length - 1 ? { color: theme } : { color: 'white' }}>{item.value}</span>
+                                        {item.suffix && <span>{item.suffix}</span>}
+                                    </div>
+                                </React.Fragment>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 
             {/* Scroll Down Indicator */}
             <a
-                href="#calculator"
+                href="#usp"
                 className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 text-white/50 flex flex-col items-center gap-2 cursor-pointer animate-pulse-soft"
             >
-                <span className="text-xs font-medium tracking-widest uppercase">Scroll Down</span>
+                <span className="text-xs font-medium tracking-widest">더 알아보기</span>
                 <ArrowRight className="rotate-90" size={20} />
             </a>
         </section>

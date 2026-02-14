@@ -2,23 +2,25 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { ChevronUp, ChevronDown } from "lucide-react";
 
-import { siteConfig } from "@/data/siteConfig";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const FAQ = ({ theme = "#FECE48" }: { theme?: string }) => {
+    const { siteConfig } = useSiteConfig();
     const faqs = siteConfig.faq.items;
 
     const [openIndex, setOpenIndex] = useState<number | null>(0);
 
     return (
+        <LazyMotion features={domAnimation}>
         <section id="faq" className="min-h-screen flex flex-col justify-center pt-24 pb-12 md:pt-32 md:pb-20 bg-brand-black">
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className="text-center mb-8 md:mb-12 relative inline-block w-full">
                     <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-20 h-20 md:w-32 md:h-32 animate-bounce duration-[2000ms] z-0 opacity-80">
                         <Image
-                            src="/speaker.webp"
+                            src={siteConfig.media?.speakerIcon || "/images/speaker.webp"}
                             alt="Speaker"
                             fill
                             className="object-contain"
@@ -46,7 +48,7 @@ const FAQ = ({ theme = "#FECE48" }: { theme?: string }) => {
                             </button>
                             <AnimatePresence>
                                 {openIndex === index && (
-                                    <motion.div
+                                    <m.div
                                         initial={{ height: 0, opacity: 0 }}
                                         animate={{ height: "auto", opacity: 1 }}
                                         exit={{ height: 0, opacity: 0 }}
@@ -55,7 +57,7 @@ const FAQ = ({ theme = "#FECE48" }: { theme?: string }) => {
                                         <div className="pt-2 border-t border-gray-800 mt-2 break-keep">
                                             {faq.a}
                                         </div>
-                                    </motion.div>
+                                    </m.div>
                                 )}
                             </AnimatePresence>
                         </div>
@@ -63,6 +65,7 @@ const FAQ = ({ theme = "#FECE48" }: { theme?: string }) => {
                 </div>
             </div>
         </section>
+        </LazyMotion>
     );
 };
 

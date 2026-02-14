@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import React from "react";
-import { siteConfig } from "@/data/siteConfig";
+import { getSiteConfig } from "@/lib/getSiteConfig";
 import { locationData } from "@/data/seoData";
 import { JSONLDScript, generateFAQSchema, generateLocalBusinessSchema } from "@/lib/structuredData";
 
@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://dobong.gosudriving.com/locations/${slug}`,
       images: [
         {
-          url: "https://dobong.gosudriving.com/logo-black.webp",
+          url: "https://dobong.gosudriving.com/images/logos/logo-black.webp",
           width: 800,
           height: 600,
           alt: `${locationName} 운전면허`,
@@ -69,6 +69,8 @@ export default async function Page({ params }: Props) {
   const locationInfo = locationData.find((loc) => loc.slug === decodedSlug);
   const locationName = locationInfo ? locationInfo.name : "";
   const keyword = locationInfo?.keyword; // Extract keyword
+
+  const siteConfig = await getSiteConfig();
 
   // Use Cost Data for the main Hero (Broad Appeal)
   const heroData = siteConfig.landing.cost.hero;
@@ -96,6 +98,8 @@ export default async function Page({ params }: Props) {
           locationName={showDefaultContent ? undefined : locationName}
           keyword={showDefaultContent ? undefined : keyword}
           designStyle={designStyle}
+          trustBar={siteConfig.trustBar}
+          heroBackground={siteConfig.media?.heroBackground}
         />
 
         {/* 2. USP Section (Video Grid) */}

@@ -1,6 +1,5 @@
 import React from "react";
-import { landingData } from "@/data/landingData";
-import { siteConfig } from "@/data/siteConfig";
+import { getSiteConfig } from "@/lib/getSiteConfig";
 import { JSONLDScript, generateFAQSchema } from "@/lib/structuredData";
 
 // Components
@@ -30,7 +29,7 @@ export const metadata = {
         url: "https://dobong.gosudriving.com/phobia",
         images: [
             {
-                url: "https://dobong.gosudriving.com/logo-black.webp",
+                url: "https://dobong.gosudriving.com/images/logos/logo-black.webp",
                 width: 800,
                 height: 600,
                 alt: "고수의 운전면허 Phobia 케어",
@@ -39,8 +38,9 @@ export const metadata = {
     },
 };
 
-export default function PhobiaPage() {
-    const theme = landingData.phobia.theme;
+export default async function PhobiaPage() {
+    const siteConfig = await getSiteConfig();
+    const theme = siteConfig.landing.phobia.theme;
 
     return (
         <main className="min-h-screen bg-brand-black font-sans text-white selection:bg-brand-yellow selection:text-brand-black overflow-x-hidden relative">

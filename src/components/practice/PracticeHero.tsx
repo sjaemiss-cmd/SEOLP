@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Target, ArrowRight } from "lucide-react";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 import Image from "next/image";
 
 interface PracticeHeroProps {
@@ -11,20 +11,22 @@ interface PracticeHeroProps {
 }
 
 const PracticeHero = ({ locationName, keyword }: PracticeHeroProps) => {
+    const { siteConfig, landingData } = useSiteConfig();
     const data = landingData.practice.hero;
     const theme = landingData.practice.theme;
 
     // 지역명이 있으면 별도 span으로 분리
+    const formattedTitle = (data.title || "").replace(/\n/g, '<br/>');
     const titleContent = locationName
-        ? `<span class="block text-xl md:text-3xl font-bold text-gray-400 mb-3">${locationName} ${keyword || "운전연수"},</span>${data.title}`
-        : "부족한 점만 골라 채우세요.<br/>1:1 핀셋 과외로 완성합니다.";
+        ? `<span class="block text-xl md:text-3xl font-bold text-gray-400 mb-3">${locationName} ${keyword || "운전연수"},</span>${formattedTitle}`
+        : formattedTitle;
 
     return (
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-brand-black pt-20">
             {/* Background Image with Overlay */}
             <div className="absolute inset-0 z-0">
                 <Image
-                    src="/practice_hero_bg.webp"
+                    src={siteConfig.media?.heroBackground || "/images/heroes/practice_hero_bg.webp"}
                     alt="정밀 운전 시뮬레이터 연습 화면"
                     fill
                     className="object-cover opacity-70"

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, RefreshCw, ArrowRight, ShieldCheck } from "lucide-react";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const triggers = [
     { id: "truck", label: "큰 트럭이나 버스가 옆에 지나갈 때" },
@@ -15,6 +15,7 @@ const triggers = [
 ];
 
 const AnxietyReliefPrescription = () => {
+    const { landingData } = useSiteConfig();
     const theme = landingData.phobia.theme;
     const [selectedTriggers, setSelectedTriggers] = useState<string[]>([]);
     const [showPrescription, setShowPrescription] = useState(false);

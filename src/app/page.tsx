@@ -1,5 +1,5 @@
 import React from "react";
-import { siteConfig } from "@/data/siteConfig";
+import { getSiteConfig } from "@/lib/getSiteConfig";
 import { JSONLDScript, generateFAQSchema } from "@/lib/structuredData";
 
 // Components
@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import USP from "@/components/USP";
 import ProgramTeaser from "@/components/ProgramTeaser";
+import PriceAnchor from "@/components/PriceAnchor";
 
 // Shared Components
 import SocialProof from "@/components/SocialProof";
@@ -21,7 +22,9 @@ export const metadata = {
   description: "노원/도봉 운전면허 합격률 1위! 실내 운전연습장에서 합리적인 비용으로 운전면허 취득하세요. 합격할 때까지 추가 비용 없는 무제한 보장반 운영.",
 };
 
-export default function Home() {
+export default async function Home() {
+  const siteConfig = await getSiteConfig();
+
   // Use Cost Data for the main Hero (Broad Appeal)
   const heroData = siteConfig.landing.cost.hero;
   const heroTheme = siteConfig.landing.cost.theme || "#FECE48";
@@ -41,6 +44,8 @@ export default function Home() {
           data={heroData}
           theme={heroTheme}
           designStyle={designStyle}
+          trustBar={siteConfig.trustBar}
+          heroBackground={siteConfig.media?.heroBackground}
         />
 
         {/* 2. USP Section (Video Grid) */}
@@ -48,6 +53,9 @@ export default function Home() {
 
         {/* 3. Program Teaser (Course Selection) - Hub Feature */}
         <ProgramTeaser slug="dobong" />
+
+        {/* 4. Price Anchor (가격 비교) */}
+        <PriceAnchor theme={heroTheme} />
 
         {/* Shared Sections */}
         <SocialProof theme={heroTheme} />

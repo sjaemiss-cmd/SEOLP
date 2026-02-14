@@ -1,11 +1,14 @@
+// Static fallback data — used when Turso DB is unavailable.
+// Runtime data is served from Turso via getSiteConfig().
+
 /**
  * Site Configuration Data
- * 
+ *
  * Centralized configuration for all text content on the website.
  */
 
 // ============================================
-// Base Interfaces (Moved from landingData.ts)
+// Base Interfaces
 // ============================================
 
 export interface FeatureItem {
@@ -69,6 +72,7 @@ export interface ProblemContent {
     title: string;
     subtitle: string;
     features: FeatureItem[];
+    checklist?: string[];
 }
 
 export interface CurriculumContent {
@@ -132,6 +136,176 @@ export interface LandingContent {
     theme?: string;
     designStyle?: 'aggressive' | 'trust' | 'premium';
     cta?: CTAContent;
+    caseStudy?: CaseStudyConfig;
+    solution?: SolutionConfig;
+}
+
+// ============================================
+// Event & Additional Interfaces
+// ============================================
+
+export interface EventPlan {
+    tag: string;
+    icon: string;
+    title: string;
+    description: string;
+    benefitLabel: string;
+    benefitBadge: string;
+    benefitText: string;
+    features: string[];
+    ctaText: string;
+    ctaLink: string;
+    highlighted: boolean;
+}
+
+export interface EventConfig {
+    badge: string;
+    title: string;
+    titleHighlight: string;
+    subtitle: string;
+    urgencyNote: string;
+    plans: EventPlan[];
+    disclaimer: string;
+}
+
+export interface FallbackReview {
+    id: number;
+    image: string;
+    text: string;
+    name: string;
+    date: string;
+}
+
+export interface PriceAnchorConfig {
+    title: string;
+    subtitle: string;
+    competitor: {
+        label: string;
+        price: string;
+        cons: string[];
+    };
+    ours: {
+        badge: string;
+        label: string;
+        price: string;
+        priceNote: string;
+        pros: string[];
+        ctaText: string;
+        ctaLink: string;
+    };
+}
+
+// ============================================
+// Trust Bar, USP Cards, Program Teaser, Location
+// ============================================
+
+export interface TrustBarItem {
+    value: string;
+    prefix?: string;
+    suffix?: string;
+}
+
+export interface UspCard {
+    badge: string;
+    title: string;
+    description: string;
+}
+
+export interface ProgramTeaserProgram {
+    id: string;
+    title: string;
+    description: string;
+    badge: string;
+}
+
+export interface ProgramTeaserConfig {
+    title: string;
+    titleHighlight: string;
+    subtitle: string;
+    ctaText: string;
+    programs: ProgramTeaserProgram[];
+}
+
+export interface LocationFeature {
+    icon: string;
+    title: string;
+    description: string;
+}
+
+export interface LocationConfig {
+    stationName: string;
+    walkTime: string;
+    subtitle: string;
+    mapLink: string;
+    mapButtonText: string;
+    features: LocationFeature[];
+}
+
+// ============================================
+// Case Study & Solution (Speed-specific)
+// ============================================
+
+export interface CaseStudyStat {
+    label: string;
+    value: string;
+    negative: boolean;
+}
+
+export interface CaseStudySide {
+    title: string;
+    subtitle: string;
+    image: string;
+    quote: string;
+    stats: CaseStudyStat[];
+    imageTitle?: string;
+    imageSubtitle?: string;
+    ctaText?: string;
+}
+
+export interface CaseStudyConfig {
+    badge: string;
+    title: string;
+    titleHighlight: string;
+    subtitle: string;
+    before: CaseStudySide;
+    after: CaseStudySide;
+}
+
+export interface SolutionItem {
+    title: string;
+    description: string;
+}
+
+export interface SolutionConfig {
+    competitorTitle: string;
+    title: string;
+    items: SolutionItem[];
+}
+
+// ============================================
+// Media Config Interface
+// ============================================
+
+export interface MediaConfig {
+    logo: string;
+    heroBackground: string;
+    mapImage: string;
+    speakerIcon: string;
+    eventBackground: string;
+    videos: {
+        celeb: string;
+        station: string;
+        accident: string;
+        function: string;
+        motion: string;
+    };
+    programCards: {
+        speed: string;
+        skill: string;
+        cost: string;
+        phobia: string;
+        practice: string;
+    };
 }
 
 // ============================================
@@ -166,12 +340,16 @@ export interface SiteConfig {
         title: string;
         items: { q: string; a: string }[];
     };
+    event?: EventConfig;
+    fallbackReviews?: FallbackReview[];
+    priceAnchor?: PriceAnchorConfig;
+    media?: MediaConfig;
+    trustBar?: TrustBarItem[];
+    uspCards?: UspCard[];
+    programTeaser?: ProgramTeaserConfig;
+    location?: LocationConfig;
     landing: Record<string, LandingContent>;
 }
-
-// ============================================
-// Site Configuration
-// ============================================
 
 export const siteConfig: SiteConfig = {
     common: {
@@ -182,438 +360,833 @@ export const siteConfig: SiteConfig = {
         copyright: `© ${new Date().getFullYear()} 고수의 운전면허 도봉점. All rights reserved.`,
     },
     header: {
-        nav: {
-            usp: "특장점",
-            reviews: "후기",
-            location: "약도",
-            event: "이벤트",
-            faq: "FAQ",
-        },
-        buttons: {
-            call: "전화 상담",
-        },
+            "nav": {
+                    "usp": "특장점",
+                    "reviews": "후기",
+                    "location": "약도",
+                    "event": "이벤트",
+                    "faq": "자주 묻는 질문"
+            },
+            "buttons": {
+                    "call": "전화 상담"
+            }
     },
     footer: {
-        customerCenter: "고객센터",
-        operatingHours: "평일 09:00 - 21:00\n토요일 10:00 - 18:00\n일요일 휴무",
+            "customerCenter": "고객센터",
+            "operatingHours": "평일 09:00 - 21:00\n토요일 10:00 - 18:00\n일요일 휴무"
     },
     faq: {
-        title: "자주 묻는 질문",
-        items: [
+            "title": "자주 묻는 질문",
+            "items": [
+                    {
+                            "q": "정말 시뮬레이터로 연습해도 합격할 수 있나요?",
+                            "a": "네, 합격 할 수 있기 때문에 합격무제한 상품을 기획했습니다! 실제 시험장 코스를 완벽하게 구현하여 코스 암기와 핸들링 감각을 익히는데 최적화되어 있습니다. 실제 차를 타기 전 충분한 연습이 되어 합격률이 매우 높습니다."
+                    },
+                    {
+                            "q": "운전을 아예 처음 해보는데 괜찮을까요?",
+                            "a": "물론입니다. 기초 조작법부터 차근차근 1:1로 알려드리기 때문에 초보자분들도 걱정 없이 시작하실 수 있습니다."
+                    },
+                    {
+                            "q": "예약은 어떻게 하나요?",
+                            "a": "최초 예약은 네이버 예약 혹은 카카오톡 채팅을 통해 진행하실 수 있으며, 이후 예약은 카카오톡을 통해 원하시는 시간에 자유롭게 예약하실 수 있습니다. 당일 예약도 가능합니다."
+                    },
+                    {
+                            "q": "불합격하면 추가 비용이 드나요?",
+                            "a": "합격보장반을 등록하시면 면허 취득하실 때까지 추가 비용 없이 3개월 간 무제한으로 연습하실 수 있습니다."
+                    },
+                    {
+                            "q": "시뮬레이터와 실제 차의 차이가 크지 않나요?",
+                            "a": "실제 시험장 코스를 그대로 구현하고, 모션 베이스로 가감속·회전 시의 체감까지 재현하여 실차와의 차이를 최소화합니다. 실제로 시뮬레이터 연습만으로 기능·도로주행 한 번에 합격하시는 분들이 대다수입니다."
+                    },
+                    {
+                            "q": "학원과 비교했을 때 어떤 장점이 있나요?",
+                            "a": "학원 대비 약 50% 저렴한 비용으로 횟수 제한 없이 반복 연습이 가능합니다. 또한 도봉면허시험장까지 도보 2분 거리에 위치해 연습 후 바로 시험 응시가 가능하며, 1:1 밀착 코칭으로 개인별 약점을 집중 보완해 드립니다."
+                    },
+                    {
+                            "q": "주차 연습도 가능한가요?",
+                            "a": "네, 가능합니다. 직각(T자) 주차, 평행 주차, 후진 주차 등 다양한 주차 상황을 시뮬레이터에서 무한 반복 연습하실 수 있습니다. 면허 취득 후 실전 주차까지 대비할 수 있도록 도와드립니다."
+                    }
+            ]
+    },
+    event: {
+            "badge": "신학기 한정 이벤트",
+            "title": "새학기 새출발",
+            "titleHighlight": "면허따고 갓생살자!",
+            "subtitle": "도봉점 한정 특별할인 이벤트",
+            "urgencyNote": "※ 신규 등록 잔여 수량 20개 이후 조기 마감될 수 있습니다.",
+            "plans": [
+                    {
+                            "tag": "추천",
+                            "icon": "gift",
+                            "title": "장롱면허 탈출 5% 할인",
+                            "description": "12시간 이상 시간제 요금 등록시\n5% 할인 혜택 제공",
+                            "benefitLabel": "혜택",
+                            "benefitBadge": "Limited",
+                            "benefitText": "5% 할인 이벤트",
+                            "features": [
+                                    "12시간 이상 등록 필수",
+                                    "선착순 10명 한정",
+                                    "장롱면허 완전탈출!"
+                            ],
+                            "ctaText": "상담 예약하기",
+                            "ctaLink": "https://booking.naver.com/booking/6/bizes/697059/items/7313402?area=ple&lang=ko&startDate=2026-01-26&theme=place",
+                            "highlighted": false
+                    },
+                    {
+                            "tag": "BEST CHOICE",
+                            "icon": "Gift",
+                            "title": "합격무제한 요금제",
+                            "description": "3개월 합격무제한 요금제 등록시\n5% 할인 혜택 제공",
+                            "benefitLabel": "특별 혜택",
+                            "benefitBadge": "선착순",
+                            "benefitText": "5% 할인 혜택 제공",
+                            "features": [
+                                    "3개월 등록 필수",
+                                    "합격할 때까지 무제한 연습",
+                                    "선착순 10명 한정"
+                            ],
+                            "ctaText": "무제한반 상담받기",
+                            "ctaLink": "https://booking.naver.com/booking/6/bizes/697059/items/4416581?area=ple&lang=ko&theme=place",
+                            "highlighted": true
+                    }
+            ],
+            "disclaimer": "* 할인혜택은 재고 소진 시 조기 마감될 수 있습니다. * 1인 1회 한정입니다."
+    },
+    fallbackReviews: [
             {
-                q: "정말 시뮬레이터로 연습해도 합격할 수 있나요?",
-                a: "네, 합격 할 수 있기 때문에 합격무제한 상품을 기획했습니다! 실제 시험장 코스를 완벽하게 구현하여 코스 암기와 핸들링 감각을 익히는데 최적화되어 있습니다. 실제 차를 타기 전 충분한 연습이 되어 합격률이 매우 높습니다.",
+                    "id": 0,
+                    "image": "https://gosudriving.com/data/files/54cc00e6732898f04cf10407e5063c83.jpg",
+                    "text": "정말 너무 친절하시고 세세하게 알려주십니다!어려웠던 부분도 강사님들 덕분에 다시 이해하고시험 합격할 수 있었습니다 ㅎㅎ가성비 대비해서 정말 강추드립니다시뮬로도 충분히 면허합격 가능합니다!",
+                    "name": "이*준",
+                    "date": ""
             },
             {
-                q: "운전을 아예 처음 해보는데 괜찮을까요?",
-                a: "물론입니다. 기초 조작법부터 차근차근 1:1로 알려드리기 때문에 초보자분들도 걱정 없이 시작하실 수 있습니다.",
+                    "id": 1,
+                    "image": "https://gosudriving.com/data/files/3b70da72807195e67dd4f61e22b0c5d1.jpg",
+                    "text": "전에 했던 경험이 있는 채로 왔었는데, 잘 상기시켜주셔서 일주일 조금 넘게 지나 합격까지 했습니다! 면허시험장과 너무 가까워서 좋고 모르는 점이나 헷갈리는 점도 잘 알려주셔서 편하게 합격할 수 있던것 같아요!",
+                    "name": "김*하",
+                    "date": ""
             },
             {
-                q: "예약은 어떻게 하나요?",
-                a: "최초 예약은 네이버 예약 혹은 카카오톡 채팅을 통해 진행하실 수 있으며, 이후 예약은 카카오톡을 통해 원하시는 시간에 자유롭게 예약하실 수 있습니다. 당일 예약도 가능합니다.",
+                    "id": 2,
+                    "image": "https://gosudriving.com/data/files/99196b4682b37e1fbb5d91dd50b6eec1.jpg",
+                    "text": "면허 땄어요. 기분이 너무 좋네요",
+                    "name": "김*화",
+                    "date": ""
             },
             {
-                q: "불합격하면 추가 비용이 드나요?",
-                a: "합격보장반을 등록하시면 면허 취득하실 때까지 추가 비용 없이 3개월 간 무제한으로 연습하실 수 있습니다.",
+                    "id": 3,
+                    "image": "https://gosudriving.com/data/files/9bff5922d928a1d43c9e49f0130657e3.jpg",
+                    "text": "친절한 강사님 덕분에 빠르게 면허 딸 수 있었습니다!! 정말 좋으니까 와보시는 거 추천드려요!!",
+                    "name": "김*윤",
+                    "date": ""
             },
-        ]
+            {
+                    "id": 4,
+                    "image": "https://gosudriving.com/data/files/ac2a02a5810d8428e0257c14c67f8ccd.jpg",
+                    "text": "선생님의 좋은 지도 덕분에 면허 합격했습니다 !!! 면허 합격 이후에도 주차 알려주셔서 너무 좋은 것 같아요! 그동안 감사했습니다~~~",
+                    "name": "박*현",
+                    "date": ""
+            },
+            {
+                    "id": 5,
+                    "image": "https://gosudriving.com/data/files/a3fb1491e02bc3b049fcaed792ad14ac.webp",
+                    "text": "운전이 무서우면 고수운전학원 2주면 합격 50대후반 합격햇네요 화이팅감사합니다",
+                    "name": "서*원",
+                    "date": ""
+            },
+            {
+                    "id": 6,
+                    "image": "https://gosudriving.com/data/files/89dde8c23f9dfba95b2de557e7840afd.jpg",
+                    "text": "시뮬레이션이 실제로 차로 운전하는거랑 비슷해요! 브레이크 감도 바꿀수 있는점도 너무 좋고 코스 그대로 나와있어서 익히기 좋아요! 선생님들도 다 친절하시고 설명 잘하십니다 추천해요!!",
+                    "name": "김*아",
+                    "date": ""
+            },
+            {
+                    "id": 7,
+                    "image": "https://gosudriving.com/data/files/6a7f68077417836a0690f3c82c8b0dd7.jpg",
+                    "text": "시뮬레이션으로도 충분히 실제 차랑 비슷해서 연습하기 좋았습니다. 덕분에 기능 도로주행 둘 다 한 번에 합격했어요! 감사합니다☺️❤️",
+                    "name": "이*혜",
+                    "date": ""
+            }
+    ],
+    priceAnchor: {
+            "title": "비용, 반값이면 충분합니다",
+            "subtitle": "학원비 아끼고, 합격까지 보장받으세요",
+            "competitor": {
+                    "label": "학원 평균",
+                    "price": "120만원",
+                    "cons": [
+                            "불합격 시 추가 비용",
+                            "제한된 연습 시간",
+                            "대기 시간 발생"
+                    ]
+            },
+            "ours": {
+                    "badge": "BEST",
+                    "label": "고수의 운전면허",
+                    "price": "55만원",
+                    "priceNote": "합격무제한 (부가세 포함)",
+                    "pros": [
+                            "합격 시까지 추가비용 0원",
+                            "3개월 무제한 연습",
+                            "1:1 밀착 코칭 포함"
+                    ],
+                    "ctaText": "지금 바로 예약하기",
+                    "ctaLink": "https://pcmap.place.naver.com/place/38729351/ticket"
+            }
+    },
+    media: {
+            "logo": "/images/logos/logo-white.webp",
+            "heroBackground": "/images/heroes/hero3.webp",
+            "mapImage": "/images/naver_map.webp",
+            "speakerIcon": "/images/speaker.webp",
+            "eventBackground": "/uploads/1771050776380_new_semester.png",
+            "videos": {
+                    "celeb": "/videos/celebv.mp4",
+                    "station": "/videos/stationmosaic.mp4",
+                    "accident": "/videos/accident.mp4",
+                    "function": "/videos/function.mp4",
+                    "motion": "/videos/motion.mp4"
+            },
+            "programCards": {
+                    "speed": "/images/program_teaser/card_speed_bg.webp",
+                    "skill": "/images/program_teaser/card_skill_bg.webp",
+                    "cost": "/images/program_teaser/card_cost_bg.webp",
+                    "phobia": "/images/program_teaser/card_phobia_bg.webp",
+                    "practice": "/images/program_teaser/card_practice_bg.webp"
+            }
+    },
+    trustBar: [
+            {
+                    "value": "5,000+",
+                    "suffix": "명 합격"
+            },
+            {
+                    "value": "92%",
+                    "prefix": "합격률"
+            },
+            {
+                    "value": "4.9",
+                    "prefix": "리뷰",
+                    "suffix": "점"
+            }
+    ],
+    uspCards: [
+            {
+                    "badge": "",
+                    "title": "합격할 때까지\n무제한 보장",
+                    "description": "첫 결제후엔 걱정하지 마세요.\n추가 비용 없이 끝까지 책임집니다."
+            },
+            {
+                    "badge": "CELEB's PICK",
+                    "title": "연예인도 믿고 찾는\n검증된 운전 연습장",
+                    "description": "수많은 셀럽들이 선택한 이유가 있습니다."
+            },
+            {
+                    "badge": "2min WALK",
+                    "title": "노원역 3번 출구\n도보 2분 컷!",
+                    "description": "도봉면허시험장도 걸어서 2분이면 도착해요."
+            },
+            {
+                    "badge": "",
+                    "title": "1:1 밀착\n맞춤 코칭",
+                    "description": "나의 운전 실력과 습관을 분석하여\n부족한 부분을 집중적으로 케어해드립니다."
+            },
+            {
+                    "badge": "SAFE & EASY",
+                    "title": "실수해도 괜찮아요\n사고 걱정 ZERO",
+                    "description": "교통사고 걱정 없이 마음껏 실수하며\n진짜 실력을 키우세요."
+            },
+            {
+                    "badge": "REALISTIC",
+                    "title": "풀 한 포기, 흔들림까지\n그대로 재현",
+                    "description": "전국 시험장을 완벽하게 구현하고\n모션 베이스로 현장감까지!"
+            }
+    ],
+    programTeaser: {
+            "title": "나에게 딱 맞는",
+            "titleHighlight": "코스 찾기",
+            "subtitle": "현재 상황과 목표에 맞춰 최적의 커리큘럼을 선택하세요.",
+            "ctaText": "자세히 보기",
+            "programs": [
+                    {
+                            "id": "speed",
+                            "title": "빠른 취득이 필요하신 분",
+                            "description": "시간이 금인 분들을 위한\n초단기 면허 취득 코스",
+                            "badge": "가장 빠름"
+                    },
+                    {
+                            "id": "skill",
+                            "title": "합격 공식반",
+                            "description": "감으로 하는 운전은 그만!\n공식으로 배우는 확실한 합격",
+                            "badge": "합격 보장"
+                    },
+                    {
+                            "id": "cost",
+                            "title": "가성비 합격반",
+                            "description": "학원비 절반 가격으로\n합격할 때까지 무제한",
+                            "badge": "BEST"
+                    },
+                    {
+                            "id": "phobia",
+                            "title": "장롱면허 탈출반",
+                            "description": "운전이 두려운 분들을 위한\n심리 케어 & 안전 연수",
+                            "badge": "만족도 1위"
+                    },
+                    {
+                            "id": "practice",
+                            "title": "운전 연습장",
+                            "description": "주차, 차선변경 등\n부족한 점만 골라 연습",
+                            "badge": "핀셋 과외"
+                    }
+            ]
+    },
+    location: {
+            "stationName": "노원역 3번 출구",
+            "walkTime": "단 2분",
+            "subtitle": "더 이상 멀리 다니지 마세요. 역세권 최고의 접근성!",
+            "mapLink": "https://map.naver.com/p/entry/place/38729351",
+            "mapButtonText": "네이버 지도로 보기",
+            "features": [
+                    {
+                            "icon": "MapPin",
+                            "title": "편하게 걸어올 위치",
+                            "description": "노원역 3번 출구로 나오셔서 직진 100m"
+                    },
+                    {
+                            "icon": "Check",
+                            "title": "시험장과 가까운 거리",
+                            "description": "도봉운전면허시험장까지 도보로 단 2분 거리입니다.\n연습 후 바로 시험 보러 가기 최적의 위치!"
+                    },
+                    {
+                            "icon": "Clock",
+                            "title": "편리한 방문",
+                            "description": "대중교통 이용이 매우 편리하며,\n건물 내 주차도 가능합니다. (사전 문의 필수)"
+                    }
+            ]
     },
     landing: {
-        speed: {
-            theme: "#EF4444",
-            designStyle: 'aggressive',
-            hero: {
-                badge: "고객의 의심을 확신으로 바꿔주는 한 방",
-                title: "학원들의 '3일 완성' 광고,\n진실을 폭로합니다.",
-                subtitle: "재능 타고난 상위 1%가 아니라면 현실적으로 어렵습니다.\n희망 고문 대신, 누구나 가능한 '가장 빠른 1주일' 플랜을 제시합니다.",
-                ctaText: "현실적인 1주 완성반 보기"
-            },
-            problem: {
-                title: "왜 3일 만에 따려다\n3주가 걸릴까요?",
-                subtitle: "팩트 체크: 3일 완성이 실패하는 이유",
-                features: [
-                    {
-                        title: "90%는 불합격",
-                        description: "기능 4시간, 주행 6시간...\n법정 최소 시간만 타보고 시험장 가면\n대부분 떨어집니다.",
-                        icon: 'shield',
-                        highlight: false
-                    },
-                    {
-                        title: "시간 2배 소요",
-                        description: "한 번 떨어지면 재접수까지 3일 대기.\n결국 시간은 2배로 듭니다.",
-                        icon: 'clock',
-                        highlight: true
-                    },
-                    {
-                        title: "비용 추가 발생",
-                        description: "돈과 시간 아끼려다\n재시험 비용으로 15만 원 더 썼습니다.\n결국 4주 소요됩니다.",
-                        icon: 'award',
-                        highlight: false
-                    }
+        "speed": {
+            "theme": "#EF4444",
+        "designStyle": "aggressive",
+        "hero": {
+                "badge": "고객의 의심을 확신으로 바꿔주는 한 방",
+                "title": "학원들의 '3일 완성' 광고,\n진실을 폭로합니다.",
+                "subtitle": "재능 타고난 상위 1%가 아니라면 현실적으로 어렵습니다.\n희망 고문 대신, 누구나 가능한 '가장 빠른 1주일' 플랜을 제시합니다.",
+                "ctaText": "현실적인 1주 완성반 보기"
+        },
+        "problem": {
+                "title": "왜 3일 만에 따려다\n3주가 걸릴까요?",
+                "subtitle": "팩트 체크: 3일 완성이 실패하는 이유",
+                "features": [
+                        {
+                                "title": "90%는 불합격",
+                                "description": "기능 4시간, 주행 6시간...\n법정 최소 시간만 타보고 시험장 가면\n대부분 떨어집니다.",
+                                "icon": "shield",
+                                "highlight": false
+                        },
+                        {
+                                "title": "시간 2배 소요",
+                                "description": "한 번 떨어지면 재접수까지 3일 대기.\n결국 시간은 2배로 듭니다.",
+                                "icon": "clock",
+                                "highlight": true
+                        },
+                        {
+                                "title": "비용 추가 발생",
+                                "description": "돈과 시간 아끼려다\n재시험 비용으로 15만 원 더 썼습니다.\n결국 4주 소요됩니다.",
+                                "icon": "award",
+                                "highlight": false
+                        }
                 ]
-            },
-            curriculum: {
-                title: "재수 없는(One-Pass)\nNO FAIL ROUTINE",
-                steps: [
-                    {
-                        step: "Step 1",
-                        title: "OT & 기능 기초",
-                        description: "필기 요령 및 학습법 코칭.\n좌/우회전, 차선 유지(코스 따라가기) 집중 연습"
-                    },
-                    {
-                        step: "Step 2",
-                        title: "장내 기능 마스터",
-                        description: "기기 조작, 경사로, 돌발, 가속 구간 완벽 공략.\n가장 어려운 직각(T자) 주차 공식 전수"
-                    },
-                    {
-                        step: "Step 3",
-                        title: "도로 주행 핵심 스킬",
-                        description: "가감속, 차선 변경, 교차로(좌/우/유턴),\n커브, 차간 거리 유지 등 실전 스킬 훈련"
-                    },
-                    {
-                        step: "Step 4",
-                        title: "시험 코스 시뮬레이션",
-                        description: "면허시험장 A, B, C, D 코스 완벽 분석.\n네비게이션 음성과 코스를 통째로 암기"
-                    }
+        },
+        "curriculum": {
+                "title": "재수 없는(One-Pass)\nNO FAIL ROUTINE",
+                "steps": [
+                        {
+                                "step": "Step 1",
+                                "title": "OT & 기능 기초",
+                                "description": "필기 요령 및 학습법 코칭.\n좌/우회전, 차선 유지(코스 따라가기) 집중 연습"
+                        },
+                        {
+                                "step": "Step 2",
+                                "title": "장내 기능 마스터",
+                                "description": "기기 조작, 경사로, 돌발, 가속 구간 완벽 공략.\n가장 어려운 직각(T자) 주차 공식 전수"
+                        },
+                        {
+                                "step": "Step 3",
+                                "title": "도로 주행 핵심 스킬",
+                                "description": "가감속, 차선 변경, 교차로(좌/우/유턴),\n커브, 차간 거리 유지 등 실전 스킬 훈련"
+                        },
+                        {
+                                "step": "Step 4",
+                                "title": "시험 코스 시뮬레이션",
+                                "description": "면허시험장 A, B, C, D 코스 완벽 분석.\n네비게이션 음성과 코스를 통째로 암기"
+                        }
                 ]
-            },
-            offer: {
-                title: "3개월 합격무제한반\n(기능+도로)",
-                priceDescription: "500,000원 (2종 보통 기준, 부가세 별도)",
-                points: [
-                    "3개월 내 면허 취득 시까지 무제한 교육",
-                    "불합격 시 추가 교육비 0원 보장",
-                    "도봉/노원 시험장 코스 완벽 분석",
-                    "합격할 때까지 끝까지 책임집니다"
+        },
+        "offer": {
+                "title": "3개월 합격무제한반\n(기능+도로)",
+                "priceDescription": "500,000원 (2종 보통 기준, 부가세 별도)",
+                "points": [
+                        "3개월 내 면허 취득 시까지 무제한 교육",
+                        "불합격 시 추가 교육비 0원 보장",
+                        "도봉/노원 시험장 코스 완벽 분석",
+                        "합격할 때까지 끝까지 책임집니다"
                 ],
-                ctaText: "합격무제한반 상담하기"
-            },
+                "ctaText": "합격무제한반 상담하기"
+        },
+        "caseStudy": {
+                "badge": "REAL CASE STUDY",
+                "title": "\"3일 만에 딴다더니...",
+                "titleHighlight": "4주가 걸렸어요\"",
+                "subtitle": "수강생들의 실제 이야기를 통해 학원들의 '단기 완성' 마케팅 이면을 확인해보세요.",
+                "before": {
+                        "title": "BEFORE: 일반 학원",
+                        "subtitle": "황*정씨의 뼈아픈 경험",
+                        "image": "/images/usp/badcasestudy.webp",
+                        "quote": "3일 완성이라는 말만 믿고 등록했는데, 실제로는 예약 잡기도 힘들고 한 번 떨어지니까 재시험까지 일주일씩 밀리더라고요. 결국 면허 따는 데만 4주가 걸렸고, 추가 교육비로만 20만 원을 더 썼습니다.",
+                        "stats": [
+                                {
+                                        "label": "소요 기간",
+                                        "value": "28일 (4주)",
+                                        "negative": true
+                                },
+                                {
+                                        "label": "기본 수강료",
+                                        "value": "900,000원",
+                                        "negative": false
+                                },
+                                {
+                                        "label": "추가 비용",
+                                        "value": "225,000원",
+                                        "negative": true
+                                }
+                        ]
+                },
+                "after": {
+                        "title": "AFTER: 고수의 운전면허",
+                        "subtitle": "김*정 학생의 2주일 합격의 비결",
+                        "image": "/images/usp/goodcasestudy.webp",
+                        "imageTitle": "14일 만에 원패스!",
+                        "imageSubtitle": "사고 걱정 없는 무제한 연습의 힘",
+                        "quote": "고수에서는 떨어질 걱정 없이 제가 원하는 만큼 충분히 연습할 수 있었어요. 특히 주차 공식이 너무 명확해서 시험장에서 당황하지 않았죠. 딱 2주일 만에 면허증을 손에 쥐었을 때의 쾌감은 잊을 수 없어요!",
+                        "stats": [
+                                {
+                                        "label": "소요 기간",
+                                        "value": "14일 (2주)",
+                                        "negative": false
+                                },
+                                {
+                                        "label": "기본 수강료",
+                                        "value": "550,000원",
+                                        "negative": false
+                                },
+                                {
+                                        "label": "추가 비용",
+                                        "value": "0원 (합격보장)",
+                                        "negative": false
+                                }
+                        ],
+                        "ctaText": "나도 2주일 만에 따기"
+                }
+        },
+        "solution": {
+                "competitorTitle": "타 학원 광고",
+                "title": "고수의 2주 플랜",
+                "items": [
+                        {
+                                "title": "무제한 연습",
+                                "description": "감이 잡힐 때까지 10시간이고 20시간이고"
+                        },
+                        {
+                                "title": "시뮬레이션 무한 리셋",
+                                "description": "사고 걱정 없이 과감하게 밟으세요"
+                        },
+                        {
+                                "title": "진짜 2주일 완성",
+                                "description": "재시험 없이 한 번에 붙는 게 가장 빠릅니다"
+                        }
+                ]
+        },
             get usp() {
                 return this.problem;
             }
         },
-        skill: {
-            theme: "#3B82F6",
-            designStyle: 'trust',
-            hero: {
-                badge: "LOGIC DRIVEN DRIVING",
-                title: "운전은 감각이 아니라\n공식(Formula)입니다.",
-                subtitle: "애매한 '감'으로 운전하면 반드시 떨어집니다.\n수학 문제 풀듯이 딱 떨어지는 정답만 알려드립니다.",
-                ctaText: "합격 공식 다운로드"
-            },
-            problem: {
-                title: "왜 30년 베테랑 아빠에게\n배워도 떨어질까요?",
-                subtitle: "감으로 운전하는 것과 시험 합격 공식은 다릅니다.",
-                features: [
-                    {
-                        title: "감(Feeling) vs 공식(Logic)",
-                        description: "모호한 감 대신\n명확한 수학 공식을 전수합니다.",
-                        icon: 'monitor',
-                        highlight: false
-                    },
-                    {
-                        title: "Cheat Sheet 제공",
-                        description: "시뮬레이터 화면에 표시되는\n가이드라인(정답선)만 따라가세요.",
-                        icon: 'check',
-                        highlight: true
-                    },
-                    {
-                        title: "무제한 연습",
-                        description: "횟수 제한 없이\n부족한 부분을 무한 반복하세요.",
-                        icon: 'shield',
-                        highlight: false
-                    }
+        "skill": {
+            "theme": "#3b96f7",
+        "designStyle": "trust",
+        "hero": {
+                "badge": "LOGIC DRIVEN DRIVING",
+                "title": "운전은 감각이 아니라\n공식(Formula)입니다.",
+                "subtitle": "애매한 '감'으로 운전하면 반드시 떨어집니다.\n수학 문제 풀듯이 딱 떨어지는 정답만 알려드립니다.",
+                "ctaText": "합격 공식 다운로드"
+        },
+        "problem": {
+                "title": "왜 30년 베테랑 아빠에게\n배워도 떨어질까요?",
+                "subtitle": "감으로 운전하는 것과 시험 합격 공식은 다릅니다.",
+                "features": [
+                        {
+                                "title": "감(Feeling) vs 공식(Logic)",
+                                "description": "모호한 감 대신\n명확한 수학 공식을 전수합니다.",
+                                "icon": "monitor",
+                                "highlight": false
+                        },
+                        {
+                                "title": "Cheat Sheet 제공",
+                                "description": "시뮬레이터 화면에 표시되는\n가이드라인(정답선)만 따라가세요.",
+                                "icon": "check",
+                                "highlight": true
+                        },
+                        {
+                                "title": "무제한 연습",
+                                "description": "횟수 제한 없이\n부족한 부분을 무한 반복하세요.",
+                                "icon": "shield",
+                                "highlight": false
+                        }
                 ]
-            },
-            curriculum: {
-                title: "기계치도 합격하는\n공식 암기 루틴",
-                steps: [
-                    {
-                        step: "Step 1",
-                        title: "OT & 기초 공식",
-                        description: "필기 요령 및 학습법 코칭.\n핸들링, 차선 유지 등 기초 주행 공식 학습"
-                    },
-                    {
-                        step: "Step 2",
-                        title: "장내 기능 공식",
-                        description: "기기 조작, 경사로, 가속 구간 공식화.\n가장 어려운 직각(T자) 주차 공식 완벽 전수"
-                    },
-                    {
-                        step: "Step 3",
-                        title: "도로 주행 공식",
-                        description: "나의 주행 습관을 고수 매니저가 하나하나 샅샅히 파악하여 빗나간 각도와 타이밍을 미세 조정해드립니다."
-                    },
-                    {
-                        step: "Step 4",
-                        title: "시험 코스 분석",
-                        description: "면허시험장 A~D 코스 정밀 분석.\n네비게이션 음성과 코스 공략법 암기"
-                    }
+        },
+        "curriculum": {
+                "title": "기계치도 합격하는\n공식 암기 루틴",
+                "steps": [
+                        {
+                                "step": "Step 1",
+                                "title": "OT & 기초 공식",
+                                "description": "필기 요령 및 학습법 코칭.\n핸들링, 차선 유지 등 기초 주행 공식 학습"
+                        },
+                        {
+                                "step": "Step 2",
+                                "title": "장내 기능 공식",
+                                "description": "기기 조작, 경사로, 가속 구간 공식화.\n가장 어려운 직각(T자) 주차 공식 완벽 전수"
+                        },
+                        {
+                                "step": "Step 3",
+                                "title": "도로 주행 공식",
+                                "description": "나의 주행 습관을 고수 매니저가 하나하나 샅샅히 파악하여 빗나간 각도와 타이밍을 미세 조정해드립니다."
+                        },
+                        {
+                                "step": "Step 4",
+                                "title": "시험 코스 분석",
+                                "description": "면허시험장 A~D 코스 정밀 분석.\n네비게이션 음성과 코스 공략법 암기"
+                        }
                 ]
-            },
-            offer: {
-                title: "3개월 합격무제한반\n(기능+도로)",
-                priceDescription: "550,000원 (부가세 포함)",
-                points: [
-                    "3개월 내 면허 취득 시까지 무제한 교육",
-                    "불합격 시 추가 교육비 0원 보장",
-                    "기능/도로주행 공식 완벽 전수",
-                    "합격할 때까지 끝까지 책임집니다"
+        },
+        "offer": {
+                "title": "3개월 합격무제한반\n(기능+도로)",
+                "priceDescription": "550,000원 (부가세 포함)",
+                "points": [
+                        "3개월 내 면허 취득 시까지 무제한 교육",
+                        "불합격 시 추가 교육비 0원 보장",
+                        "기능/도로주행 공식 완벽 전수",
+                        "합격할 때까지 끝까지 책임집니다"
                 ],
-                ctaText: "합격무제한반 상담하기"
-            },
-            diagnosis: {
-                title: "나의 운전 실력 진단하기",
-                subtitle: "간단한 테스트로 나에게 딱 맞는 커리큘럼을 찾아보세요.",
-                questions: [
-                    {
-                        id: 1,
-                        question: "주차할 때 가장 어려운 점은 무엇인가요?",
-                        options: [
-                            { id: "a", text: "공간 감각이 없어서 어디로 꺾어야 할지 모르겠어요.", score: 1 },
-                            { id: "b", text: "수정 주차가 너무 어려워요.", score: 2 },
-                            { id: "c", text: "주차는 할 수 있는데 시간이 너무 오래 걸려요.", score: 3 },
-                            { id: "d", text: "주차는 자신 있어요!", score: 4 }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        question: "차선 변경, 언제 가장 두려우신가요?",
-                        options: [
-                            { id: "a", text: "사이드미러 보는 것 자체가 무서워요.", score: 1 },
-                            { id: "b", text: "끼어들 타이밍을 전혀 못 잡겠어요.", score: 2 },
-                            { id: "c", text: "뒤차가 빵! 거릴까 봐 겁나요.", score: 3 },
-                            { id: "d", text: "차선 변경은 문제 없어요.", score: 4 }
-                        ]
-                    },
-                    {
-                        id: 3,
-                        question: "좁은 골목길이나 코너를 돌 때 느낌은?",
-                        options: [
-                            { id: "a", text: "긁을까 봐 조마조마해서 못 지나가겠어요.", score: 1 },
-                            { id: "b", text: "반대편에서 차가 오면 멘붕이 와요.", score: 2 },
-                            { id: "c", text: "천천히 가면 갈 수 있어요.", score: 3 },
-                            { id: "d", text: "부드럽게 잘 빠져나갑니다.", score: 4 }
-                        ]
-                    }
+                "ctaText": "합격무제한반 상담하기"
+        },
+        "diagnosis": {
+                "title": "나의 운전 실력 진단하기",
+                "subtitle": "간단한 테스트로 나에게 딱 맞는 커리큘럼을 찾아보세요.",
+                "questions": [
+                        {
+                                "id": 1,
+                                "question": "주차할 때 가장 어려운 점은 무엇인가요?",
+                                "options": [
+                                        {
+                                                "id": "a",
+                                                "text": "공간 감각이 없어서 어디로 꺾어야 할지 모르겠어요.",
+                                                "score": 1
+                                        },
+                                        {
+                                                "id": "b",
+                                                "text": "수정 주차가 너무 어려워요.",
+                                                "score": 2
+                                        },
+                                        {
+                                                "id": "c",
+                                                "text": "주차는 할 수 있는데 시간이 너무 오래 걸려요.",
+                                                "score": 3
+                                        },
+                                        {
+                                                "id": "d",
+                                                "text": "주차는 자신 있어요!",
+                                                "score": 4
+                                        }
+                                ]
+                        },
+                        {
+                                "id": 2,
+                                "question": "차선 변경, 언제 가장 두려우신가요?",
+                                "options": [
+                                        {
+                                                "id": "a",
+                                                "text": "사이드미러 보는 것 자체가 무서워요.",
+                                                "score": 1
+                                        },
+                                        {
+                                                "id": "b",
+                                                "text": "끼어들 타이밍을 전혀 못 잡겠어요.",
+                                                "score": 2
+                                        },
+                                        {
+                                                "id": "c",
+                                                "text": "뒤차가 빵! 거릴까 봐 겁나요.",
+                                                "score": 3
+                                        },
+                                        {
+                                                "id": "d",
+                                                "text": "차선 변경은 문제 없어요.",
+                                                "score": 4
+                                        }
+                                ]
+                        },
+                        {
+                                "id": 3,
+                                "question": "좁은 골목길이나 코너를 돌 때 느낌은?",
+                                "options": [
+                                        {
+                                                "id": "a",
+                                                "text": "긁을까 봐 조마조마해서 못 지나가겠어요.",
+                                                "score": 1
+                                        },
+                                        {
+                                                "id": "b",
+                                                "text": "반대편에서 차가 오면 멘붕이 와요.",
+                                                "score": 2
+                                        },
+                                        {
+                                                "id": "c",
+                                                "text": "천천히 가면 갈 수 있어요.",
+                                                "score": 3
+                                        },
+                                        {
+                                                "id": "d",
+                                                "text": "부드럽게 잘 빠져나갑니다.",
+                                                "score": 4
+                                        }
+                                ]
+                        }
                 ],
-                results: [
-                    {
-                        minScore: 0,
-                        maxScore: 5,
-                        level: "기초 메커니즘 이해 필요",
-                        description: "재능은 충분합니다! 하지만 자만은 금물. '3개월 무제한반'으로 감각을 완벽하게 다듬고, 최단 기간 합격에 도전하세요. 평균 한달만에 면허취득까지 가능합니다!",
-                        recommendation: "3개월 합격무제한반 (기초 집중)",
-                        color: "text-red-500"
-                    },
-                    {
-                        minScore: 6,
-                        maxScore: 9,
-                        level: "도로주행 공식 적용 필요",
-                        description: "재능은 충분합니다! 하지만 자만은 금물. '3개월 무제한반'으로 감각을 완벽하게 다듬고, 최단 기간 합격에 도전하세요. 평균 한달만에 면허취득까지 가능합니다!",
-                        recommendation: "3개월 합격무제한반 (공식 마스터)",
-                        color: "text-orange-500"
-                    },
-                    {
-                        minScore: 10,
-                        maxScore: 12,
-                        level: "합격 최적화 상태",
-                        description: "재능은 충분합니다! 하지만 자만은 금물. '3개월 무제한반'으로 감각을 완벽하게 다듬고, 최단 기간 합격에 도전하세요. 평균 한달만에 면허취득까지 가능합니다!",
-                        recommendation: "3개월 합격무제한반 (코스 분석)",
-                        color: "text-green-500"
-                    }
+                "results": [
+                        {
+                                "minScore": 0,
+                                "maxScore": 5,
+                                "level": "기초 메커니즘 이해 필요",
+                                "description": "재능은 충분합니다! 하지만 자만은 금물. '3개월 무제한반'으로 감각을 완벽하게 다듬고, 최단 기간 합격에 도전하세요. 평균 한달만에 면허취득까지 가능합니다!",
+                                "recommendation": "3개월 합격무제한반 (기초 집중)",
+                                "color": "text-red-500"
+                        },
+                        {
+                                "minScore": 6,
+                                "maxScore": 9,
+                                "level": "도로주행 공식 적용 필요",
+                                "description": "재능은 충분합니다! 하지만 자만은 금물. '3개월 무제한반'으로 감각을 완벽하게 다듬고, 최단 기간 합격에 도전하세요. 평균 한달만에 면허취득까지 가능합니다!",
+                                "recommendation": "3개월 합격무제한반 (공식 마스터)",
+                                "color": "text-orange-500"
+                        },
+                        {
+                                "minScore": 10,
+                                "maxScore": 12,
+                                "level": "합격 최적화 상태",
+                                "description": "재능은 충분합니다! 하지만 자만은 금물. '3개월 무제한반'으로 감각을 완벽하게 다듬고, 최단 기간 합격에 도전하세요. 평균 한달만에 면허취득까지 가능합니다!",
+                                "recommendation": "3개월 합격무제한반 (코스 분석)",
+                                "color": "text-green-500"
+                        }
                 ]
-            },
+        },
             get usp() {
                 return this.problem;
             }
         },
-        cost: {
-            theme: "#FECE48",
-            designStyle: 'premium',
-            hero: {
-                badge: "",
-                title: `<span class="block text-xl md:text-3xl font-bold text-white/90 mb-6 font-sans tracking-tight">노원·도봉 1위 시뮬레이션 면허</span><span class="block text-4xl md:text-7xl font-black text-brand-yellow leading-tight font-retrosans tracking-tighter drop-shadow-lg">반값이면 충분합니다</span>`,
-                subtitle: "100만원짜리 면허, 반값으로 끝내세요.<br/>불합격해도 추가비용 0원.",
-                ctaText: "추가비용 없이 시작하기",
-                ctaLink: "https://pcmap.place.naver.com/place/38729351/ticket"
-            },
-            problem: {
-                title: "왜 고수의 운전면허 도봉점인가요?",
-                subtitle: "다른 곳과는 비교할 수 없는 압도적인 차이",
-                features: []
-            },
-            curriculum: {
-                title: "가성비 끝판왕\n합격 최적화 루틴",
-                steps: [
-                    {
-                        step: "Step 1",
-                        title: "OT & 기초 주행",
-                        description: "필기 요령 및 학습법 코칭.\n기초 주행 능력 빠르게 습득"
-                    },
-                    {
-                        step: "Step 2",
-                        title: "장내 기능 마스터",
-                        description: "기기 조작, 경사로, 돌발, 가속 구간.\n직각(T자) 주차 집중 훈련"
-                    },
-                    {
-                        step: "Step 3",
-                        title: "도로 주행 스킬",
-                        description: "가감속, 차선 변경, 교차로, 커브 등\n실전 도로 주행 능력 배양"
-                    },
-                    {
-                        step: "Step 4",
-                        title: "시험 코스 완벽 대비",
-                        description: "면허시험장 A~D 코스 시뮬레이션.\n코스 암기 및 모의고사 진행"
-                    }
-                ]
-            },
-            offer: {
-                title: "3개월 합격무제한반\n(기능+도로)",
-                priceDescription: "550,000원 (부가세 포함)",
-                points: [
-                    "3개월 내 면허 취득 시까지 무제한 교육",
-                    "학원 대비 50% 저렴한 비용",
-                    "불합격 시 추가 교육비 0원 보장",
-                    "합격할 때까지 끝까지 책임집니다"
-                ],
-                ctaText: "최저가 상담하기",
-                ctaLink: "https://pcmap.place.naver.com/place/38729351/ticket"
-            }
+        "cost": {
+        "theme": "#FECE48",
+        "designStyle": "premium",
+        "hero": {
+                "badge": "노원·도봉 합격률 1위",
+                "title": "<span class=\"block text-xl md:text-3xl font-bold text-white/90 mb-6 font-sans tracking-tight\">노원·도봉 1위 시뮬레이션 면허</span><span class=\"block text-4xl md:text-7xl font-black text-brand-yellow leading-tight font-retrosans tracking-tighter drop-shadow-lg\">반값이면 충분합니다</span>",
+                "subtitle": "100만원짜리 면허, 반값으로 저렴하게 끝내세요.<br/>불합격해도 추가비용 0원.",
+                "ctaText": "추가비용 없이 시작하기",
+                "ctaLink": "https://pcmap.place.naver.com/place/38729351/ticket"
         },
-        phobia: {
-            theme: "#4ADE80",
-            hero: {
-                title: "도로 위가 무서우신가요?\n그건 당신의 잘못이 아닙니다.",
-                subtitle: "사고 위험 0%의 안전한 시뮬레이터에서\n운전의 즐거움을 되찾아 드립니다.",
-                badge: "장롱면허 탈출 솔루션",
-                ctaText: "안전운전 체험 예약하기",
-                ctaLink: "https://pcmap.place.naver.com/place/38729351/ticket"
-            },
-            problem: {
-                title: "왜 운전이 두려워졌을까요?",
-                subtitle: "도로 연수의 두려움을 제거하고 심리적 안전을 제공합니다.",
-                features: [
-                    {
-                        title: "절대 안전",
-                        description: "사고로부터 100% 안전한 실내 시뮬레이터로 도로상황을 완벽하게 재현해 운전에 자신감을 쌓아갑니다",
-                        icon: "ShieldCheck"
-                    },
-                    {
-                        title: "친절한 교육",
-                        description: "소리 지르지 않는 매니저님과 함께하는 편안한 수업",
-                        icon: "Smile"
-                    },
-                    {
-                        title: "무한 반복",
-                        description: "두려운 구간만 집중적으로 반복하여 자신감 회복",
-                        icon: "Repeat"
-                    }
-                ]
-            },
-            curriculum: {
-                title: "두려움을 자신감으로 바꾸는 3단계",
-                steps: [
-                    {
-                        step: "STEP 01",
-                        title: "도로 주행 기초",
-                        description: "가감속, 차선 변경, 교차로(좌/우/유턴), 커브, 차간 거리 유지 등 기초 주행 감각 회복"
-                    },
-                    {
-                        step: "STEP 02",
-                        title: "심화 주행 & 고속도로",
-                        description: "고속 주행, 시내 주행(실제 도로 구현), 지방 도로 코스 등 다양한 환경 적응"
-                    },
-                    {
-                        step: "STEP 03",
-                        title: "주차 완전 정복",
-                        description: "후진/평행/기계식 주차, 좁은 골목길, 주차장 진출입로 등 고난이도 주차 마스터"
-                    }
-                ]
-            },
-            offer: {
-                title: "장롱면허 탈출\n24시간 완성반",
-                priceDescription: "640,000원 (2종 보통 기준, 부가세 별도)",
-                points: [
-                    "충분한 시간으로 두려움 완벽 극복",
-                    "기초부터 주행까지 꼼꼼한 케어",
-                    "사고 위험 없는 안전한 연수",
-                    "자신감 생길 때까지 무한 반복"
-                ],
-                ctaText: "처방전대로 시작하기",
-                ctaLink: "https://pcmap.place.naver.com/place/38729351/ticket"
-            },
-            cta: {
-                title: "이제 운전이 즐거워집니다",
-                subtitle: "더 이상 두려워하지 마세요. 고수의 운전면허가 함께합니다.",
-                button: "무료 상담 신청하기",
-                link: "https://pcmap.place.naver.com/place/38729351/ticket"
-            }
+        "problem": {
+                "title": "왜 고수의 운전면허 도봉점일까요?",
+                "subtitle": "다른 곳과는 비교할 수 없는 압도적인 차이점",
+                "features": []
         },
-        practice: {
-            theme: "#8B5CF6",
-            hero: {
-                badge: "초보 탈출 핀셋 과외",
-                title: "운전, 부족한 점만 골라 채우세요.\n1:1 핀셋 과외로 완성합니다.",
-                subtitle: "여행, 출장 앞두고 급하신가요?\n부족한 스킬만 쏙쏙 골라 채워드립니다.",
-                ctaText: "원 포인트 레슨 예약",
-                ctaLink: "https://pcmap.place.naver.com/place/38729351/ticket"
-            },
-            problem: {
-                title: "도로 연수는 이동 시간이 절반입니다.",
-                subtitle: "시뮬레이터는 원하는 상황만 무한 반복하여 효율을 극대화합니다.",
-                features: [
-                    {
-                        title: "주차 무한 반복",
-                        description: "평행 주차, 후진 주차, 골목길 주차 등\n가장 어려운 주차만 집중 훈련합니다.",
-                        icon: "Repeat",
-                        highlight: true
-                    },
-                    {
-                        title: "상황별 시나리오",
-                        description: "골목길, 고속도로, 차로진입 등 까다로운 특정상황만 집중적으로 연습 가능합니다",
-                        icon: "monitor",
-                        highlight: false
-                    },
-                    {
-                        title: "압도적 가성비",
-                        description: "도로 연수 대비 1/3 가격으로\n원하는 만큼 충분히 연습하세요.",
-                        icon: "award",
-                        highlight: false
-                    }
+        "curriculum": {
+                "title": "가성비 끝판왕\n합격 최적화 루틴",
+                "steps": [
+                        {
+                                "step": "Step 1",
+                                "title": "OT & 기초 주행",
+                                "description": "필기 요령 및 학습법 코칭.\n기초 주행 능력 빠르게 습득"
+                        },
+                        {
+                                "step": "Step 2",
+                                "title": "장내 기능 마스터",
+                                "description": "기기 조작, 경사로, 돌발, 가속 구간.\n직각(T자) 주차 집중 훈련"
+                        },
+                        {
+                                "step": "Step 3",
+                                "title": "도로 주행 스킬",
+                                "description": "가감속, 차선 변경, 교차로, 커브 등\n실전 도로 주행 능력 배양"
+                        },
+                        {
+                                "step": "Step 4",
+                                "title": "시험 코스 완벽 대비",
+                                "description": "면허시험장 A~D 코스 시뮬레이션.\n코스 암기 및 모의고사 진행"
+                        }
                 ]
-            },
-            curriculum: {
-                title: "3시간 완성 핀셋 커리큘럼",
-                steps: [
-                    {
-                        step: "STEP 01",
-                        title: "주행 감각 & 기초",
-                        description: "가감속, 차선 변경, 교차로 등\n잊어버린 기초 주행 감각을 빠르게 되살립니다."
-                    },
-                    {
-                        step: "STEP 02",
-                        title: "고속 & 시내 주행",
-                        description: "고속도로 진입, 복잡한 시내 주행,\n커브길 등 실전 도로 상황을 집중 연습합니다."
-                    },
-                    {
-                        step: "STEP 03",
-                        title: "주차 마스터",
-                        description: "후진, 평행, 기계식 주차 및\n좁은 골목길 주차까지 완벽하게 마스터합니다."
-                    }
-                ]
-            },
-            offer: {
-                title: "속성 12시간 마스터반",
-                priceDescription: "360,000원 (2종 보통 기준, 부가세 별도)",
-                points: [
-                    "원하는 스킬만 집중 공략",
-                    "가성비 최고의 선택",
-                    "시간 낭비 없는 효율적 교육",
-                    "부족한 부분만 쏙쏙 골라 마스터"
+        },
+        "offer": {
+                "title": "3개월 합격무제한반\n(기능+도로)",
+                "priceDescription": "550,000원 (부가세 포함)",
+                "points": [
+                        "3개월 내 면허 취득 시까지 무제한 교육",
+                        "학원 대비 50% 저렴한 비용",
+                        "불합격 시 추가 교육비 0원 보장",
+                        "합격할 때까지 끝까지 책임집니다"
                 ],
-                ctaText: "12시간 마스터반 상담하기",
-                ctaLink: "https://pcmap.place.naver.com/place/38729351/ticket"
-            }
+                "ctaText": "최저가 상담하기",
+                "ctaLink": "https://pcmap.place.naver.com/place/38729351/ticket"
         }
+},
+        "phobia": {
+        "theme": "#4ADE80",
+        "hero": {
+                "title": "도로 위가 무서우신가요?\n그건 당신의 잘못이 아닙니다.",
+                "subtitle": "사고 위험 0%의 안전한 시뮬레이터에서\n운전의 즐거움을 되찾아 드립니다.",
+                "badge": "장롱면허 탈출 솔루션",
+                "ctaText": "안전운전 체험 예약하기",
+                "ctaLink": "https://pcmap.place.naver.com/place/38729351/ticket"
+        },
+        "problem": {
+                "title": "왜 운전이 두려워졌을까요?",
+                "subtitle": "도로 연수의 두려움을 제거하고 심리적 안전을 제공합니다.",
+                "features": [
+                        {
+                                "title": "절대 안전",
+                                "description": "사고로부터 100% 안전한 실내 시뮬레이터로 도로상황을 완벽하게 재현해 운전에 자신감을 쌓아갑니다",
+                                "icon": "ShieldCheck"
+                        },
+                        {
+                                "title": "친절한 교육",
+                                "description": "소리 지르지 않는 매니저님과 함께하는 편안한 수업",
+                                "icon": "Smile"
+                        },
+                        {
+                                "title": "무한 반복",
+                                "description": "두려운 구간만 집중적으로 반복하여 자신감 회복",
+                                "icon": "Repeat"
+                        }
+                ]
+        },
+        "curriculum": {
+                "title": "두려움을 자신감으로 바꾸는 3단계",
+                "steps": [
+                        {
+                                "step": "STEP 01",
+                                "title": "도로 주행 기초",
+                                "description": "가감속, 차선 변경, 교차로(좌/우/유턴), 커브, 차간 거리 유지 등 기초 주행 감각 회복"
+                        },
+                        {
+                                "step": "STEP 02",
+                                "title": "심화 주행 & 고속도로",
+                                "description": "고속 주행, 시내 주행(실제 도로 구현), 지방 도로 코스 등 다양한 환경 적응"
+                        },
+                        {
+                                "step": "STEP 03",
+                                "title": "주차 완전 정복",
+                                "description": "후진/평행/기계식 주차, 좁은 골목길, 주차장 진출입로 등 고난이도 주차 마스터"
+                        }
+                ]
+        },
+        "offer": {
+                "title": "장롱면허 탈출\n24시간 완성반",
+                "priceDescription": "640,000원 (2종 보통 기준, 부가세 별도)",
+                "points": [
+                        "충분한 시간으로 두려움 완벽 극복",
+                        "기초부터 주행까지 꼼꼼한 케어",
+                        "사고 위험 없는 안전한 연수",
+                        "자신감 생길 때까지 무한 반복"
+                ],
+                "ctaText": "처방전대로 시작하기",
+                "ctaLink": "https://pcmap.place.naver.com/place/38729351/ticket"
+        },
+        "cta": {
+                "title": "이제 운전이 즐거워집니다",
+                "subtitle": "더 이상 두려워하지 마세요. 고수의 운전면허가 함께합니다.",
+                "button": "무료 상담 신청하기",
+                "link": "https://pcmap.place.naver.com/place/38729351/ticket"
+        }
+},
+        "practice": {
+        "theme": "#8B5CF6",
+        "hero": {
+                "badge": "초보 탈출 핀셋 과외",
+                "title": "운전, 부족한 점만 골라 채우세요.\n1:1 핀셋 과외로 완성합니다.",
+                "subtitle": "여행, 출장 앞두고 급하신가요?\n부족한 스킬만 쏙쏙 골라 채워드립니다.",
+                "ctaText": "원 포인트 레슨 예약",
+                "ctaLink": "https://pcmap.place.naver.com/place/38729351/ticket"
+        },
+        "problem": {
+                "title": "도로 연수는 이동 시간이 절반입니다.",
+                "subtitle": "시뮬레이터는 원하는 상황만 무한 반복하여 효율을 극대화합니다.",
+                "features": [
+                        {
+                                "title": "주차 무한 반복",
+                                "description": "평행 주차, 후진 주차, 골목길 주차 등\n가장 어려운 주차만 집중 훈련합니다.",
+                                "icon": "Repeat",
+                                "highlight": true
+                        },
+                        {
+                                "title": "상황별 시나리오",
+                                "description": "골목길, 고속도로, 차로진입 등 까다로운 특정상황만 집중적으로 연습 가능합니다",
+                                "icon": "monitor",
+                                "highlight": false
+                        },
+                        {
+                                "title": "압도적 가성비",
+                                "description": "도로 연수 대비 1/3 가격으로\n원하는 만큼 충분히 연습하세요.",
+                                "icon": "award",
+                                "highlight": false
+                        }
+                ],
+                "checklist": [
+                        "집중 반복 훈련",
+                        "데이터 기반 피드백"
+                ]
+        },
+        "curriculum": {
+                "title": "3시간 완성 핀셋 커리큘럼",
+                "steps": [
+                        {
+                                "step": "STEP 01",
+                                "title": "주행 감각 & 기초",
+                                "description": "가감속, 차선 변경, 교차로 등\n잊어버린 기초 주행 감각을 빠르게 되살립니다."
+                        },
+                        {
+                                "step": "STEP 02",
+                                "title": "고속 & 시내 주행",
+                                "description": "고속도로 진입, 복잡한 시내 주행,\n커브길 등 실전 도로 상황을 집중 연습합니다."
+                        },
+                        {
+                                "step": "STEP 03",
+                                "title": "주차 마스터",
+                                "description": "후진, 평행, 기계식 주차 및\n좁은 골목길 주차까지 완벽하게 마스터합니다."
+                        }
+                ]
+        },
+        "offer": {
+                "title": "속성 12시간 마스터반",
+                "priceDescription": "360,000원 (2종 보통 기준, 부가세 별도)",
+                "points": [
+                        "원하는 스킬만 집중 공략",
+                        "가성비 최고의 선택",
+                        "시간 낭비 없는 효율적 교육",
+                        "부족한 부분만 쏙쏙 골라 마스터"
+                ],
+                "ctaText": "12시간 마스터반 상담하기",
+                "ctaLink": "https://pcmap.place.naver.com/place/38729351/ticket"
+        }
+}
     }
 };

@@ -3,9 +3,10 @@
 import React from "react";
 import Image from "next/image";
 
-import { siteConfig } from "@/data/siteConfig";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const Footer = ({ theme = "#FECE48" }: { theme?: string }) => {
+    const { siteConfig } = useSiteConfig();
     return (
         <footer className="bg-gray-900 py-12 text-gray-400 text-sm">
             <div className="container mx-auto px-4 text-center md:text-left">
@@ -17,7 +18,7 @@ const Footer = ({ theme = "#FECE48" }: { theme?: string }) => {
                     <div className="md:col-span-2">
                         <div className="mb-6 flex justify-center md:justify-start">
                             <Image
-                                src="/logo-white.webp"
+                                src={siteConfig.media?.logo || "/images/logos/logo-white.webp"}
                                 alt={siteConfig.common.companyName}
                                 width={160}
                                 height={48}

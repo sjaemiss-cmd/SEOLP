@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, CheckCircle2, ArrowRight } from "lucide-react";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const LicenseDDayCalculator = () => {
+    const { landingData } = useSiteConfig();
     const theme = landingData.speed.theme;
 
     const [status, setStatus] = useState<"beginner" | "written" | "function">("beginner");

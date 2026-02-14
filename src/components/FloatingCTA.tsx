@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { Phone } from "lucide-react";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const FloatingCTA = ({ theme = "#FECE48" }: { theme?: string }) => {
+    const { siteConfig } = useSiteConfig();
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
@@ -16,9 +18,10 @@ const FloatingCTA = ({ theme = "#FECE48" }: { theme?: string }) => {
     }, []);
 
     return (
+        <LazyMotion features={domAnimation}>
         <AnimatePresence>
             {isVisible && (
-                <motion.div
+                <m.div
                     initial={{ y: 100, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: 100, opacity: 0 }}
@@ -26,7 +29,7 @@ const FloatingCTA = ({ theme = "#FECE48" }: { theme?: string }) => {
                 >
                     {/* Naver Button */}
                     <a
-                        href="https://pcmap.place.naver.com/place/38729351/ticket"
+                        href={siteConfig.priceAnchor?.ours?.ctaLink || "https://pcmap.place.naver.com/place/38729351/ticket"}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-1 md:flex-none w-full md:w-auto bg-[#03C75A] text-white font-bold text-lg py-4 px-6 rounded-xl shadow-xl hover:bg-[#02b351] transition-colors text-center flex items-center justify-center gap-2"
@@ -37,7 +40,7 @@ const FloatingCTA = ({ theme = "#FECE48" }: { theme?: string }) => {
 
                     {/* Call Button */}
                     <a
-                        href="tel:02-930-9394"
+                        href={`tel:${siteConfig.common.phoneNumber}`}
                         className="flex-1 md:flex-none w-full md:w-auto text-black font-bold text-lg py-4 px-6 rounded-xl shadow-xl hover:brightness-110 transition-all text-center flex items-center justify-center gap-2 relative"
                         style={{ backgroundColor: theme }}
                     >
@@ -48,11 +51,12 @@ const FloatingCTA = ({ theme = "#FECE48" }: { theme?: string }) => {
                             상담 무료!
                         </span>
                         <Phone size={20} className="font-extrabold" />
-                        <span>전화 상담</span>
+                        <span>{siteConfig.header.buttons.call}</span>
                     </a>
-                </motion.div>
+                </m.div>
             )}
         </AnimatePresence>
+        </LazyMotion>
     );
 };
 

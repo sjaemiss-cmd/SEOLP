@@ -2,9 +2,10 @@
 
 import React from "react";
 import { Monitor, CheckCircle, Shield } from "lucide-react";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const SkillProblem = () => {
+    const { landingData } = useSiteConfig();
     const data = landingData.skill.problem;
 
     const iconMap = {

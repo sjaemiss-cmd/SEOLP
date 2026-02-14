@@ -2,9 +2,10 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const PracticeCurriculum = () => {
+    const { landingData } = useSiteConfig();
     const data = landingData.practice.curriculum;
     const theme = landingData.practice.theme;
 

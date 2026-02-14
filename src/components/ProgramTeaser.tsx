@@ -6,79 +6,38 @@ import Link from "next/link";
 import { ArrowRight, Clock, ShieldCheck, Award, GraduationCap, Target } from "lucide-react";
 
 import { m, LazyMotion, domAnimation } from "framer-motion";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 interface ProgramTeaserProps {
     slug: string;
 }
 
 const ProgramTeaser = ({ slug }: ProgramTeaserProps) => {
-    const programs = [
-        {
-            id: "speed",
-            title: "빠른 취득이 필요하신 분",
-            description: "시간이 금인 분들을 위한\n초단기 면허 취득 코스",
-            icon: Clock,
-            color: "text-red-500",
-            bgColor: "bg-red-500/10",
-            borderColor: "border-red-500/20",
-            hoverBorder: "hover:border-red-500",
-            link: `/locations/${slug}/speed`,
-            badge: "가장 빠름",
-            image: "/images/program_teaser/card_speed_bg.webp"
-        },
-        {
-            id: "skill",
-            title: "합격 공식반",
-            description: "감으로 하는 운전은 그만!\n공식으로 배우는 확실한 합격",
-            icon: GraduationCap,
-            color: "text-blue-500",
-            bgColor: "bg-blue-500/10",
-            borderColor: "border-blue-500/20",
-            hoverBorder: "hover:border-blue-500",
-            link: `/locations/${slug}/skill`,
-            badge: "합격 보장",
-            image: "/images/program_teaser/card_skill_bg.webp"
-        },
-        {
-            id: "cost",
-            title: "가성비 합격반",
-            description: "학원비 절반 가격으로\n합격할 때까지 무제한",
-            icon: Award,
-            color: "text-yellow-400",
-            bgColor: "bg-yellow-500/10",
-            borderColor: "border-yellow-500/20",
-            hoverBorder: "hover:border-yellow-400",
-            link: `/locations/${slug}/cost`,
-            badge: "BEST",
-            image: "/images/program_teaser/card_cost_bg.webp"
-        },
-        {
-            id: "phobia",
-            title: "장롱면허 탈출반",
-            description: "운전이 두려운 분들을 위한\n심리 케어 & 안전 연수",
-            icon: ShieldCheck,
-            color: "text-green-500",
-            bgColor: "bg-green-500/10",
-            borderColor: "border-green-500/20",
-            hoverBorder: "hover:border-green-500",
-            link: `/locations/${slug}/phobia`,
-            badge: "만족도 1위",
-            image: "/images/program_teaser/card_phobia_bg.webp"
-        },
-        {
-            id: "practice",
-            title: "운전 연습장",
-            description: "주차, 차선변경 등\n부족한 점만 골라 연습",
-            icon: Target,
-            color: "text-purple-500",
-            bgColor: "bg-purple-500/10",
-            borderColor: "border-purple-500/20",
-            hoverBorder: "hover:border-purple-500",
-            link: `/locations/${slug}/practice`,
-            badge: "핀셋 과외",
-            image: "/images/program_teaser/card_practice_bg.webp"
-        }
-    ];
+    const { siteConfig } = useSiteConfig();
+    const teaser = siteConfig.programTeaser;
+
+    const PROGRAM_STYLES: Record<string, { icon: typeof Clock; color: string; bgColor: string; borderColor: string; hoverBorder: string }> = {
+        speed: { icon: Clock, color: "text-red-500", bgColor: "bg-red-500/10", borderColor: "border-red-500/20", hoverBorder: "hover:border-red-500" },
+        skill: { icon: GraduationCap, color: "text-blue-500", bgColor: "bg-blue-500/10", borderColor: "border-blue-500/20", hoverBorder: "hover:border-blue-500" },
+        cost: { icon: Award, color: "text-yellow-400", bgColor: "bg-yellow-500/10", borderColor: "border-yellow-500/20", hoverBorder: "hover:border-yellow-400" },
+        phobia: { icon: ShieldCheck, color: "text-green-500", bgColor: "bg-green-500/10", borderColor: "border-green-500/20", hoverBorder: "hover:border-green-500" },
+        practice: { icon: Target, color: "text-purple-500", bgColor: "bg-purple-500/10", borderColor: "border-purple-500/20", hoverBorder: "hover:border-purple-500" },
+    };
+
+    const programData = teaser?.programs || [];
+    const programs = programData.map((p) => {
+        const style = PROGRAM_STYLES[p.id] || PROGRAM_STYLES.speed;
+        return {
+            ...p,
+            icon: style.icon,
+            color: style.color,
+            bgColor: style.bgColor,
+            borderColor: style.borderColor,
+            hoverBorder: style.hoverBorder,
+            link: `/locations/${slug}/${p.id}`,
+            image: siteConfig.media?.programCards?.[p.id as keyof typeof siteConfig.media.programCards] || `/images/program_teaser/card_${p.id}_bg.webp`,
+        };
+    });
 
     return (
         <LazyMotion features={domAnimation}>
@@ -86,10 +45,10 @@ const ProgramTeaser = ({ slug }: ProgramTeaserProps) => {
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 font-hakgyoansim">
-                            나에게 딱 맞는 <span className="text-brand-yellow">코스 찾기</span>
+                            {teaser?.title || "나에게 딱 맞는"} <span className="text-brand-yellow">{teaser?.titleHighlight || "코스 찾기"}</span>
                         </h2>
                         <p className="text-gray-400 text-lg">
-                            현재 상황과 목표에 맞춰 최적의 커리큘럼을 선택하세요.
+                            {teaser?.subtitle || "현재 상황과 목표에 맞춰 최적의 커리큘럼을 선택하세요."}
                         </p>
                     </div>
 
@@ -133,7 +92,7 @@ const ProgramTeaser = ({ slug }: ProgramTeaserProps) => {
                                         </p>
 
                                         <div className={`flex items-center font-bold ${program.color} group-hover:gap-2 transition-all duration-300`}>
-                                            <span>자세히 보기</span>
+                                            <span>{teaser?.ctaText || "자세히 보기"}</span>
                                             <ArrowRight className="w-5 h-5 ml-2" />
                                         </div>
                                     </div>

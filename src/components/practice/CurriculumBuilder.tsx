@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Map, Car, Clock, CheckCircle2, ArrowRight, Calendar } from "lucide-react";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const experienceLevels = [
     { id: "paper", label: "면허 따고 운전대 처음 잡아요 (장롱면허)", hours: 20 },
@@ -20,6 +20,7 @@ const goals = [
 ];
 
 const CurriculumBuilder = () => {
+    const { landingData } = useSiteConfig();
     const theme = landingData.practice?.theme || "#22C55E"; // Default to green if not found
     const [step, setStep] = useState(1);
     const [selectedExp, setSelectedExp] = useState<string | null>(null);

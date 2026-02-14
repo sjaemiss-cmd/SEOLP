@@ -4,7 +4,7 @@ import React from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 // Dynamic Imports - Core Components
 const Header = dynamic(() => import("@/components/Header"), { ssr: false });
@@ -64,6 +64,7 @@ function LandingPageContent() {
         restDelta: 0.001
     });
 
+    const { landingData } = useSiteConfig();
     const searchParams = useSearchParams();
     const type = searchParams.get("type") || "cost";
     const content = landingData[type] || landingData["cost"];

@@ -3,9 +3,10 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Repeat, Monitor, Award, CheckCircle2 } from "lucide-react";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const PracticeProblem = () => {
+    const { landingData } = useSiteConfig();
     const data = landingData.practice.problem;
     const theme = landingData.practice.theme;
 
@@ -83,16 +84,16 @@ const PracticeProblem = () => {
                                     />
 
                                     {/* Checklist for "Pinpoint" feel */}
-                                    <ul className="w-full text-left space-y-2 mt-auto pt-6 border-t border-gray-800">
-                                        <li className="flex items-center gap-2 text-sm text-gray-300">
-                                            <CheckCircle2 size={14} style={{ color: theme }} />
-                                            <span>집중 반복 훈련</span>
-                                        </li>
-                                        <li className="flex items-center gap-2 text-sm text-gray-300">
-                                            <CheckCircle2 size={14} style={{ color: theme }} />
-                                            <span>데이터 기반 피드백</span>
-                                        </li>
-                                    </ul>
+                                    {data.checklist && data.checklist.length > 0 && (
+                                        <ul className="w-full text-left space-y-2 mt-auto pt-6 border-t border-gray-800">
+                                            {data.checklist.map((item, i) => (
+                                                <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
+                                                    <CheckCircle2 size={14} style={{ color: theme }} />
+                                                    <span>{item}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
                                 </div>
                             </motion.div>
                         );

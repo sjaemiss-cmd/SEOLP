@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { RefreshCw, ArrowRight } from "lucide-react";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const SkillDiagnosisTest = () => {
+    const { landingData } = useSiteConfig();
     const diagnosisData = landingData.skill.diagnosis;
     const theme = landingData.skill.theme || "#3B82F6";
 

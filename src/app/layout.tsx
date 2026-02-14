@@ -4,6 +4,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { JSONLDScript, generateOrganizationSchema, generateLocalBusinessSchema } from "@/lib/structuredData";
+import { getSiteConfig } from "@/lib/getSiteConfig";
+import { SiteConfigProvider } from "@/contexts/SiteConfigContext";
 
 const pretendard = localFont({
   src: "./fonts/PretendardVariable.woff2",
@@ -41,7 +43,7 @@ export const metadata: Metadata = {
     siteName: "고수의 운전면허 도봉점",
     images: [
       {
-        url: "https://dobong.gosudriving.com/logo-black.webp",
+        url: "https://dobong.gosudriving.com/images/logos/logo-black.webp",
         width: 800,
         height: 600,
         alt: "고수의 운전면허 도봉점 로고",
@@ -54,10 +56,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "고수의 운전면허 도봉점",
     description: "합격할 때까지 무제한 보장! 노원/도봉 운전면허의 기준.",
-    images: ["https://dobong.gosudriving.com/logo-black.webp"],
+    images: ["https://dobong.gosudriving.com/images/logos/logo-black.webp"],
   },
   icons: {
-    apple: "/logo-black.webp",
+    apple: "/images/logos/logo-black.webp",
   },
 };
 
@@ -70,11 +72,13 @@ export const viewport: Viewport = {
 
 import ScrollToTop from "@/components/ScrollToTop";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const config = await getSiteConfig();
+
   return (
     <html lang="ko">
       <head>
@@ -85,8 +89,10 @@ export default function RootLayout({
       <body
         className={`${pretendard.variable} ${hakgyoansim.variable} antialiased font-sans`}
       >
-        <ScrollToTop />
-        {children}
+        <SiteConfigProvider config={config}>
+          <ScrollToTop />
+          {children}
+        </SiteConfigProvider>
         <Analytics />
         <SpeedInsights />
       </body>

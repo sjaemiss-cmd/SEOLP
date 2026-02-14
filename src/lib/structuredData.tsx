@@ -104,7 +104,7 @@ export function generateLocalBusinessSchema(locationName?: string): LocalBusines
             },
         ],
         priceRange: "$$",
-        image: "https://dobong.gosudriving.com/logo-black.webp",
+        image: "https://dobong.gosudriving.com/images/logos/logo-black.webp",
     };
 }
 
@@ -135,7 +135,7 @@ export function generateOrganizationSchema(): OrganizationSchema {
         "@type": "Organization",
         name: "고수의 운전면허 도봉점",
         url: "https://dobong.gosudriving.com",
-        logo: "https://dobong.gosudriving.com/logo-black.webp",
+        logo: "https://dobong.gosudriving.com/images/logos/logo-black.webp",
         description: "노원/도봉 운전면허 합격률 1위 실내 운전연습장",
         contactPoint: {
             "@type": "ContactPoint",

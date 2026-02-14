@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ShieldCheck, ArrowRight } from "lucide-react";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 import Image from "next/image";
 
 interface PhobiaHeroProps {
@@ -11,6 +11,7 @@ interface PhobiaHeroProps {
 }
 
 const PhobiaHero = ({ locationName, keyword }: PhobiaHeroProps) => {
+    const { siteConfig, landingData } = useSiteConfig();
     const data = landingData.phobia.hero;
     const theme = landingData.phobia.theme;
 
@@ -19,7 +20,7 @@ const PhobiaHero = ({ locationName, keyword }: PhobiaHeroProps) => {
             {/* Background Image with Overlay */}
             <div className="absolute inset-0 z-0">
                 <Image
-                    src="/hero3.webp"
+                    src={siteConfig.media?.heroBackground || "/images/heroes/hero3.webp"}
                     alt="고수의 운전면허 도봉점 실내 운전연습장 전경"
                     fill
                     className="object-cover opacity-60"
@@ -51,19 +52,24 @@ const PhobiaHero = ({ locationName, keyword }: PhobiaHeroProps) => {
                                 {locationName} {keyword || "도로연수"},
                             </span>
                         )}
-                        <span className="block mb-2 text-gray-200">
-                            도로 위가 무서우신가요?
-                        </span>
-                        <span
-                            className="relative z-10 inline px-1"
-                            style={{
-                                backgroundImage: `linear-gradient(to top, ${theme}80 40%, transparent 40%)`,
-                                boxDecorationBreak: 'clone',
-                                WebkitBoxDecorationBreak: 'clone'
-                            }}
-                        >
-                            그건 당신의 잘못이 아닙니다.
-                        </span>
+                        {(data.title || "").split("\n").map((line, i, arr) => (
+                            <React.Fragment key={i}>
+                                {i < arr.length - 1 ? (
+                                    <span className="block mb-2 text-gray-200">{line}</span>
+                                ) : (
+                                    <span
+                                        className="relative z-10 inline px-1"
+                                        style={{
+                                            backgroundImage: `linear-gradient(to top, ${theme}80 40%, transparent 40%)`,
+                                            boxDecorationBreak: 'clone',
+                                            WebkitBoxDecorationBreak: 'clone'
+                                        }}
+                                    >
+                                        {line}
+                                    </span>
+                                )}
+                            </React.Fragment>
+                        ))}
                     </h1>
 
                     {/* Subtitle */}

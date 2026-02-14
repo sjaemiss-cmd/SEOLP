@@ -2,39 +2,23 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const SkillCurriculum = () => {
-    const steps = [
-        {
-            step: "01",
-            title: "공식 이해 (Input)",
-            desc: "주차, 차선 변경, 좌/우회전 등 모든 동작을 수학 공식처럼 도식화하여 머리로 먼저 이해합니다."
-        },
-        {
-            step: "02",
-            title: "가이드 주행 (Process)",
-            desc: "시뮬레이터 화면에 표시된 '가이드라인'을 따라 빠르게 주행코스를 학습합니다"
-        },
-        {
-            step: "03",
-            title: "오차 수정 (Debug)",
-            desc: "나의 주행 데이터와 정답 데이터를 비교하여 빗나간 각도와 타이밍을 미세 조정합니다."
-        },
-        {
-            step: "04",
-            title: "합격 완성 (Output)",
-            desc: "공식이 몸에 익을 때까지 무한 반복하여, 시험장에서 생각하지 않고도 몸이 반응하게 만듭니다."
-        }
-    ];
+    const { landingData } = useSiteConfig();
+    const curriculum = landingData.skill.curriculum;
+    const steps = curriculum.steps.map((s) => ({
+        step: s.step.replace(/[^0-9]/g, '').padStart(2, '0'),
+        title: s.title,
+        desc: s.description,
+    }));
 
     return (
         <section id="curriculum" className="py-24 bg-white">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-20">
                     <span className="text-blue-600 font-bold tracking-widest text-sm uppercase mb-2 block">Curriculum</span>
-                    <h2 className="text-3xl md:text-5xl font-bold font-hakgyoansim text-gray-900">
-                        합격 알고리즘
-                    </h2>
+                    <h2 className="text-3xl md:text-5xl font-bold font-hakgyoansim text-gray-900" dangerouslySetInnerHTML={{ __html: curriculum.title.replace(/\n/g, '<br/>') }} />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl mx-auto">

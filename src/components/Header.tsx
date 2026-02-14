@@ -14,9 +14,10 @@ import { usePathname } from "next/navigation";
 
 // ... (imports)
 
-import { siteConfig } from "@/data/siteConfig";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const Header = () => {
+    const { siteConfig } = useSiteConfig();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
 
@@ -40,7 +41,7 @@ const Header = () => {
                     <div className="flex items-center">
                         <Link href="/" aria-label="메인 페이지로 이동">
                             <Image
-                                src="/logo-white.webp"
+                                src={siteConfig.media?.logo || "/images/logos/logo-white.webp"}
                                 alt={siteConfig.common.companyName}
                                 width={160}
                                 height={48}

@@ -2,9 +2,10 @@
 
 import React from "react";
 import { ArrowRight, FileText } from "lucide-react";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const SkillCTA = () => {
+    const { landingData } = useSiteConfig();
     const data = landingData.skill.offer;
 
     return (

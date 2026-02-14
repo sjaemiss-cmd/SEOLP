@@ -3,9 +3,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Brain, Zap, Eye, RefreshCw, AlertTriangle } from "lucide-react";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const DriverDNATest = () => {
+    const { landingData } = useSiteConfig();
     const theme = landingData.skill.theme || "#3B82F6";
 
     // Game States

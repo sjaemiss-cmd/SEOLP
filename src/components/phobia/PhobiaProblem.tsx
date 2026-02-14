@@ -3,9 +3,10 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, Smile, Repeat } from "lucide-react";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const PhobiaProblem = () => {
+    const { landingData } = useSiteConfig();
     const data = landingData.phobia.problem;
     const theme = landingData.phobia.theme;
 
@@ -41,9 +42,9 @@ const PhobiaProblem = () => {
                     {data.features.map((feature, index) => {
                         const IconComponent = icons[feature.icon as keyof typeof icons];
                         const bgImages = [
-                            '/phobia_safety_bg.webp',
-                            '/phobia_friendly_bg.webp',
-                            '/phobia_repeat_bg.webp'
+                            '/images/phobia/phobia_safety_bg.webp',
+                            '/images/phobia/phobia_friendly_bg.webp',
+                            '/images/phobia/phobia_repeat_bg.webp'
                         ];
 
                         return (

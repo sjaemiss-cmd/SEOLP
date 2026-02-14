@@ -2,9 +2,10 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const PhobiaCurriculum = () => {
+    const { landingData } = useSiteConfig();
     const data = landingData.phobia.curriculum;
     const theme = landingData.phobia.theme;
 

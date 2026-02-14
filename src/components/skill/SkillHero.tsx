@@ -3,7 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Binary, ChevronRight } from "lucide-react";
-import { landingData } from "@/data/landingData";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 interface SkillHeroProps {
     locationName?: string;
@@ -11,16 +11,18 @@ interface SkillHeroProps {
 }
 
 const SkillHero = ({ locationName, keyword }: SkillHeroProps) => {
+    const { siteConfig, landingData } = useSiteConfig();
+    const formattedTitle = (landingData.skill.hero.title || "").replace(/\n/g, '<br/>');
     const titleContent = locationName
-        ? `<span class="block text-2xl md:text-4xl font-bold text-white/70 mb-4">${locationName} ${keyword || "운전면허"},</span>공식과 반복이 <span class="text-blue-400">합격의 지름길</span>입니다.`
-        : landingData.skill.hero.title;
+        ? `<span class="block text-2xl md:text-4xl font-bold text-white/70 mb-4">${locationName} ${keyword || "운전면허"},</span>${formattedTitle}`
+        : formattedTitle;
 
     return (
         <section className="relative min-h-screen flex items-center pt-24 pb-12 md:pt-40 md:pb-32 overflow-hidden">
             {/* Background Image */}
             <div
                 className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat blur-[3px] scale-105"
-                style={{ backgroundImage: "url('/skill_hero_bg.jpg')" }}
+                style={{ backgroundImage: `url('${siteConfig.media?.heroBackground || "/images/heroes/skill_hero_bg.jpg"}')` }}
             />
             {/* Dark Overlay for text readability */}
             <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
@@ -52,7 +54,7 @@ const SkillHero = ({ locationName, keyword }: SkillHeroProps) => {
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <motion.a
-                                href="#skill-cta"
+                                href={landingData.skill.hero.ctaLink || "#skill-cta"}
                                 className="group px-8 py-4 bg-blue-600 text-white font-bold text-lg rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 flex items-center justify-center gap-2"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}

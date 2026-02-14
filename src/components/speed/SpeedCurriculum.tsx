@@ -2,39 +2,22 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { useSiteConfig } from "@/contexts/SiteConfigContext";
 
 const SpeedCurriculum = () => {
-    const steps = [
-        {
-            day: "STEP 1",
-            title: "OT & 기능 기초",
-            desc: "필기 시험 응시 요령 및 학습법을 코칭합니다. 좌회전, 우회전, 차선 유지(코스 따라가기)를 집중 연습합니다."
-        },
-        {
-            day: "STEP 2",
-            title: "장내 기능 마스터",
-            desc: "기기 조작, 경사로, 돌발상황, 교차로, 가속구간을 완벽하게 공략합니다. 가장 어려운 직각(T자) 주차 공식을 전수합니다."
-        },
-        {
-            day: "STEP 3",
-            title: "도로 주행 핵심 스킬",
-            desc: "가감속(정주행 연습), 차선 변경, 교차로(좌회전, 유턴, 우회전, 신호체계), 커브 연습, 급커브, 차간 거리 유지, 차로 진입 등 실전 스킬을 훈련합니다."
-        },
-        {
-            day: "STEP 4",
-            title: "시험 코스 시뮬레이션",
-            desc: "운전면허시험장 도로주행 A, B, C, D 코스를 완벽 분석합니다. 네비게이션 음성과 코스를 통째로 암기합니다."
-        }
-    ];
+    const { landingData } = useSiteConfig();
+    const curriculum = landingData.speed.curriculum;
+    const steps = curriculum.steps.map((s) => ({
+        day: s.step,
+        title: s.title,
+        desc: s.description,
+    }));
 
     return (
         <section className="py-20 bg-black text-white relative">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-20">
-                    <h2 className="text-3xl md:text-5xl font-bold font-hakgyoansim mb-4">
-                        <span className="text-red-600">재수 없는</span> 2주일 루틴
-                    </h2>
-                    <p className="text-gray-400">NO FAIL ROUTINE</p>
+                    <h2 className="text-3xl md:text-5xl font-bold font-hakgyoansim mb-4" dangerouslySetInnerHTML={{ __html: curriculum.title.replace(/\n/g, '<br/>') }} />
                 </div>
 
                 <div className="relative max-w-4xl mx-auto">
